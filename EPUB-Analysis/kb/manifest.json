@@ -1,0 +1,730 @@
+{
+    "version":  "2026-04-09",
+    "project":  "EPUB-Analysis",
+    "purpose":  "Knowledge-base source inventory for EPUB/PDF validation and autofix",
+    "folders":  [
+                    {
+                        "path":  "kb/standards/w3c",
+                        "use":  "Authoritative W3C and WHATWG specifications"
+                    },
+                    {
+                        "path":  "kb/tools/epubcheck",
+                        "use":  "EPUBCheck repository, release notes, and message references"
+                    },
+                    {
+                        "path":  "kb/tools/ace",
+                        "use":  "Ace by DAISY documentation and repository"
+                    },
+                    {
+                        "path":  "kb/guidance/daisy",
+                        "use":  "Practical DAISY guidance for navigation, metadata, and accessibility"
+                    },
+                    {
+                        "path":  "kb/lookups/dictionaries",
+                        "use":  "Spell-check and frequency resources"
+                    },
+                    {
+                        "path":  "kb/lookups/hyphenation",
+                        "use":  "Hyphenation patterns and exception lists"
+                    },
+                    {
+                        "path":  "kb/lookups/entities",
+                        "use":  "HTML entity lookup tables"
+                    },
+                    {
+                        "path":  "kb/lookups/unicode",
+                        "use":  "Unicode normalization and character data"
+                    },
+                    {
+                        "path":  "kb/internal/examples",
+                        "use":  "Approved corrections, false positives, and review cases"
+                    },
+                    {
+                        "path":  "kb/internal/rules",
+                        "use":  "Internal rule registry, OCR tables, and protected word lists"
+                    },
+                    {
+                        "path":  "kb/uploads_index",
+                        "use":  "Ephemeral per-upload retrieval indexes"
+                    }
+                ],
+    "sources":  [
+                    {
+                        "id":  "w3c-epub-33",
+                        "title":  "EPUB 3.3",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://www.w3.org/TR/epub-33/",
+                        "target_path":  "kb/standards/w3c/epub-33.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "ocf",
+                                        "opf",
+                                        "manifest",
+                                        "spine",
+                                        "nav",
+                                        "content-docs",
+                                        "conformance"
+                                    ],
+                        "notes":  "Primary structural ground truth for production rules."
+                    },
+                    {
+                        "id":  "w3c-epub-rs-33",
+                        "title":  "EPUB Reading Systems 3.3",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://www.w3.org/TR/epub-rs-33/",
+                        "target_path":  "kb/standards/w3c/epub-rs-33.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "reading-system-assumptions",
+                                        "rendering-behavior",
+                                        "support-limits",
+                                        "scripting-support",
+                                        "container-constrained-scripting",
+                                        "spine-level-scripting",
+                                        "dom-manipulation",
+                                        "layout-changes",
+                                        "security-and-privacy"
+                                    ]
+                    },
+                    {
+                        "id":  "w3c-epub-a11y-11",
+                        "title":  "EPUB Accessibility 1.1",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://www.w3.org/TR/epub-a11y-11/",
+                        "target_path":  "kb/standards/w3c/epub-a11y-11.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-conformance",
+                                        "discoverability-metadata",
+                                        "manual-review-policy"
+                                    ]
+                    },
+                    {
+                        "id":  "w3c-epub-a11y-tech-11",
+                        "title":  "EPUB Accessibility Techniques 1.1",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "official-guidance",
+                        "url":  "https://www.w3.org/TR/epub-a11y-tech-11/",
+                        "target_path":  "kb/standards/w3c/epub-a11y-tech-11.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-fix-guidance",
+                                        "examples",
+                                        "manual-review-checklists"
+                                    ]
+                    },
+                    {
+                        "id":  "w3c-epub-ssv-11",
+                        "title":  "EPUB 3 Structural Semantics Vocabulary 1.1",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://www.w3.org/TR/epub-ssv-11/",
+                        "target_path":  "kb/standards/w3c/epub-ssv-11.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "epub-type-validation",
+                                        "semantics",
+                                        "landmarks"
+                                    ]
+                    },
+                    {
+                        "id":  "w3c-wcag-22",
+                        "title":  "WCAG 2.2",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://www.w3.org/TR/wcag/",
+                        "target_path":  "kb/standards/w3c/wcag-22.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-baseline",
+                                        "severity-mapping",
+                                        "manual-review-criteria"
+                                    ]
+                    },
+                    {
+                        "id":  "whatwg-html-syntax",
+                        "title":  "HTML Living Standard - Syntax",
+                        "priority":  "P1",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://html.spec.whatwg.org/dev/syntax.html",
+                        "target_path":  "kb/standards/w3c/html-syntax.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "content-document-syntax",
+                                        "character-references",
+                                        "markup-validity",
+                                        "script-elements"
+                                    ]
+                    },
+                    {
+                        "id":  "w3c-xml-10",
+                        "title":  "Extensible Markup Language (XML) 1.0 (Fifth Edition)",
+                        "priority":  "P1",
+                        "category":  "standards",
+                        "source_type":  "official-spec",
+                        "url":  "https://www.w3.org/TR/xml/",
+                        "target_path":  "kb/standards/w3c/xml-10.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "xml-well-formedness",
+                                        "predefined-entities",
+                                        "opf-ncx-nav-xml-rules"
+                                    ]
+                    },
+                    {
+                        "id":  "w3c-css-snapshot-2025",
+                        "title":  "CSS Snapshot 2025",
+                        "priority":  "P2",
+                        "category":  "standards",
+                        "source_type":  "official-guidance",
+                        "url":  "https://www.w3.org/TR/css-2025/",
+                        "target_path":  "kb/standards/w3c/css-snapshot-2025.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "css-reference",
+                                        "rendering-support-guidance",
+                                        "css-validation",
+                                        "layout-validation"
+                                    ],
+                        "notes":  "Useful when validating or explaining CSS compatibility, but not core to current text normalization."
+                    },
+                    {
+                        "id":  "epubcheck-repo",
+                        "title":  "EPUBCheck Repository",
+                        "priority":  "P0",
+                        "category":  "tools",
+                        "source_type":  "official-tool",
+                        "url":  "https://github.com/w3c/epubcheck",
+                        "target_path":  "kb/tools/epubcheck/repo",
+                        "ingest_as":  "git-repo",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "rule-alignment",
+                                        "message-mapping",
+                                        "validator-parity"
+                                    ]
+                    },
+                    {
+                        "id":  "epubcheck-releases",
+                        "title":  "EPUBCheck Releases",
+                        "priority":  "P0",
+                        "category":  "tools",
+                        "source_type":  "official-tool",
+                        "url":  "https://github.com/w3c/epubcheck/releases",
+                        "target_path":  "kb/tools/epubcheck/releases/releases.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "supported-version-tracking",
+                                        "release-behavior"
+                                    ]
+                    },
+                    {
+                        "id":  "ace-home",
+                        "title":  "Ace by DAISY",
+                        "priority":  "P0",
+                        "category":  "tools",
+                        "source_type":  "official-tool",
+                        "url":  "https://daisy.org/activities/software/ace/",
+                        "target_path":  "kb/tools/ace/ace-home.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-tool-reference",
+                                        "report-format",
+                                        "scope"
+                                    ]
+                    },
+                    {
+                        "id":  "ace-guide",
+                        "title":  "Ace Guide in DAISY Knowledge Base",
+                        "priority":  "P0",
+                        "category":  "tools",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/epub/validation/ace.html",
+                        "target_path":  "kb/tools/ace/ace-guide.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-check-interpretation",
+                                        "report-details",
+                                        "tool-limitations"
+                                    ]
+                    },
+                    {
+                        "id":  "ace-repo",
+                        "title":  "Ace by DAISY Repository",
+                        "priority":  "P1",
+                        "category":  "tools",
+                        "source_type":  "official-tool",
+                        "url":  "https://github.com/daisy/ace",
+                        "target_path":  "kb/tools/ace/repo",
+                        "ingest_as":  "git-repo",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "rule-inspection",
+                                        "json-output-understanding"
+                                    ]
+                    },
+                    {
+                        "id":  "daisy-toc",
+                        "title":  "DAISY Knowledge Base - Table of Contents",
+                        "priority":  "P0",
+                        "category":  "guidance",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/navigation/toc.html",
+                        "target_path":  "kb/guidance/daisy/toc.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "nav-validation",
+                                        "toc-fixes",
+                                        "landmark-structure"
+                                    ]
+                    },
+                    {
+                        "id":  "daisy-pagelist",
+                        "title":  "DAISY Knowledge Base - Page List",
+                        "priority":  "P0",
+                        "category":  "guidance",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/navigation/pagelist.html",
+                        "target_path":  "kb/guidance/daisy/pagelist.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "ncx-page-list",
+                                        "nav-page-list",
+                                        "pagination-validation"
+                                    ]
+                    },
+                    {
+                        "id":  "daisy-landmarks",
+                        "title":  "DAISY Knowledge Base - Landmarks",
+                        "priority":  "P0",
+                        "category":  "guidance",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/navigation/landmarks.html",
+                        "target_path":  "kb/guidance/daisy/landmarks.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "landmark-validation",
+                                        "epub-type-navigation"
+                                    ]
+                    },
+                    {
+                        "id":  "daisy-pagenav",
+                        "title":  "DAISY Knowledge Base - Page Navigation",
+                        "priority":  "P0",
+                        "category":  "guidance",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/navigation/pagenav.html",
+                        "target_path":  "kb/guidance/daisy/pagenav.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "page-break-markers",
+                                        "page-navigation",
+                                        "source-pagination"
+                                    ]
+                    },
+                    {
+                        "id":  "daisy-schema-accessmode",
+                        "title":  "DAISY Knowledge Base - Schema.org accessMode",
+                        "priority":  "P1",
+                        "category":  "guidance",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/metadata/schema.org/accessMode.html",
+                        "target_path":  "kb/guidance/daisy/metadata-schema-org/accessMode.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-metadata",
+                                        "discovery"
+                                    ]
+                    },
+                    {
+                        "id":  "daisy-schema-accessmodesufficient",
+                        "title":  "DAISY Knowledge Base - Schema.org accessModeSufficient",
+                        "priority":  "P1",
+                        "category":  "guidance",
+                        "source_type":  "official-guidance",
+                        "url":  "https://kb.daisy.org/publishing/docs/metadata/schema.org/accessModeSufficient.html",
+                        "target_path":  "kb/guidance/daisy/metadata-schema-org/accessModeSufficient.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "accessibility-metadata",
+                                        "discovery"
+                                    ]
+                    },
+                    {
+                        "id":  "lookup-scowl",
+                        "title":  "SCOWL Word List",
+                        "priority":  "P0",
+                        "category":  "lookups",
+                        "source_type":  "dictionary",
+                        "url":  "https://github.com/en-wl/wordlist",
+                        "target_path":  "kb/lookups/dictionaries/scowl",
+                        "ingest_as":  "git-repo-or-exported-sqlite",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "spelling-validation",
+                                        "compound-word-handling",
+                                        "dialect-variants"
+                                    ],
+                        "notes":  "Prefer direct lookup or SQLite export, not embeddings."
+                    },
+                    {
+                        "id":  "lookup-libreoffice-dictionaries",
+                        "title":  "LibreOffice Dictionaries",
+                        "priority":  "P0",
+                        "category":  "lookups",
+                        "source_type":  "dictionary",
+                        "url":  "https://github.com/LibreOffice/dictionaries",
+                        "target_path":  "kb/lookups/dictionaries/libreoffice",
+                        "ingest_as":  "git-repo",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "hunspell-aff-dic",
+                                        "language-specific-spelling",
+                                        "multi-language-support"
+                                    ],
+                        "notes":  "Start with en_US and en_GB aff/dic pairs, then add target publication languages."
+                    },
+                    {
+                        "id":  "lookup-wordfreq",
+                        "title":  "wordfreq",
+                        "priority":  "P1",
+                        "category":  "lookups",
+                        "source_type":  "frequency-lexicon",
+                        "url":  "https://github.com/rspeer/wordfreq",
+                        "target_path":  "kb/lookups/dictionaries/wordfreq",
+                        "ingest_as":  "git-repo-or-pip-package-export",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "candidate-ranking",
+                                        "false-positive-reduction",
+                                        "confidence-scoring"
+                                    ]
+                    },
+                    {
+                        "id":  "lookup-hunspell-hyphen",
+                        "title":  "Hunspell Hyphenation Patterns",
+                        "priority":  "P1",
+                        "category":  "lookups",
+                        "source_type":  "hyphenation-patterns",
+                        "url":  "https://github.com/hunspell/hyphen",
+                        "target_path":  "kb/lookups/hyphenation/hunspell-hyphen",
+                        "ingest_as":  "git-repo",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "line-break-hyphenation",
+                                        "language-specific-splits"
+                                    ]
+                    },
+                    {
+                        "id":  "lookup-html-entities-json",
+                        "title":  "WHATWG HTML Named Character References",
+                        "priority":  "P0",
+                        "category":  "lookups",
+                        "source_type":  "entity-map",
+                        "url":  "https://html.spec.whatwg.org/entities.json",
+                        "target_path":  "kb/lookups/entities/html-entities.json",
+                        "ingest_as":  "json",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "entity-decoding",
+                                        "special-character-fixes"
+                                    ]
+                    },
+                    {
+                        "id":  "lookup-unicode-tr15",
+                        "title":  "Unicode Normalization Forms",
+                        "priority":  "P0",
+                        "category":  "lookups",
+                        "source_type":  "unicode-standard",
+                        "url":  "https://unicode.org/reports/tr15/",
+                        "target_path":  "kb/lookups/unicode/tr15.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "nfc-normalization",
+                                        "unicode-cleanup-policy"
+                                    ]
+                    },
+                    {
+                        "id":  "lookup-unicode-data",
+                        "title":  "UnicodeData.txt",
+                        "priority":  "P1",
+                        "category":  "lookups",
+                        "source_type":  "unicode-data",
+                        "url":  "https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt",
+                        "target_path":  "kb/lookups/unicode/UnicodeData.txt",
+                        "ingest_as":  "text",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "character-metadata",
+                                        "encoding-debugging"
+                                    ]
+                    },
+                    {
+                        "id":  "lookup-unicode-normalization-test",
+                        "title":  "NormalizationTest.txt",
+                        "priority":  "P1",
+                        "category":  "lookups",
+                        "source_type":  "unicode-data",
+                        "url":  "https://www.unicode.org/Public/UCD/latest/ucd/NormalizationTest.txt",
+                        "target_path":  "kb/lookups/unicode/NormalizationTest.txt",
+                        "ingest_as":  "text",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "normalization-tests",
+                                        "regression-validation"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-gold-corrections",
+                        "title":  "Approved Before/After Corrections",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-dataset",
+                        "url":  "",
+                        "target_path":  "kb/internal/examples/gold-corrections.jsonl",
+                        "ingest_as":  "jsonl",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "few-shot-retrieval",
+                                        "correction-templates",
+                                        "quality-regression-checks"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-manual-review",
+                        "title":  "Manual Review Cases",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-dataset",
+                        "url":  "",
+                        "target_path":  "kb/internal/examples/manual-review-cases.jsonl",
+                        "ingest_as":  "jsonl",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "do-not-autofix",
+                                        "low-confidence-routing"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-false-positives",
+                        "title":  "False Positive Log",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-dataset",
+                        "url":  "",
+                        "target_path":  "kb/internal/examples/false-positive-log.jsonl",
+                        "ingest_as":  "jsonl",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "precision-improvements",
+                                        "protected-patterns"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-rule-registry",
+                        "title":  "Rule Registry",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-rules",
+                        "url":  "",
+                        "target_path":  "kb/internal/rules/rule-registry.json",
+                        "ingest_as":  "json",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "rule-to-source-mapping",
+                                        "safe-autofix-policy",
+                                        "explanations"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-ocr-confusions",
+                        "title":  "OCR Confusions Table",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-rules",
+                        "url":  "",
+                        "target_path":  "kb/internal/rules/ocr-confusions.json",
+                        "ingest_as":  "json",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "ocr-like-token-fixes",
+                                        "confidence-heuristics"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-do-not-split",
+                        "title":  "Do Not Split Words",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-rules",
+                        "url":  "",
+                        "target_path":  "kb/internal/rules/do-not-split-words.json",
+                        "ingest_as":  "json",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "false-positive-reduction",
+                                        "brand-names",
+                                        "domain-terms"
+                                    ]
+                    },
+                    {
+                        "id":  "internal-do-not-merge",
+                        "title":  "Do Not Merge Words",
+                        "priority":  "P0",
+                        "category":  "internal",
+                        "source_type":  "internal-rules",
+                        "url":  "",
+                        "target_path":  "kb/internal/rules/do-not-merge-words.json",
+                        "ingest_as":  "json",
+                        "vector_index":  false,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "open-compound-protection",
+                                        "false-positive-reduction"
+                                    ]
+                    },
+                    {
+                        "id":  "sprint2-layout-rules",
+                        "title":  "Sprint 2 Layout Rules",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "internal-rules",
+                        "url":  "",
+                        "target_path":  "kb/standards/layout-rules.json",
+                        "ingest_as":  "json",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "css-validation",
+                                        "layout-validation",
+                                        "visual-rendering",
+                                        "table-layout",
+                                        "font-validation",
+                                        "scripting-support",
+                                        "layout-changes"
+                                    ]
+                    },
+                    {
+                        "id":  "sprint2-script-rules",
+                        "title":  "Sprint 2 Script Rules",
+                        "priority":  "P0",
+                        "category":  "standards",
+                        "source_type":  "internal-rules",
+                        "url":  "",
+                        "target_path":  "kb/standards/script-rules.json",
+                        "ingest_as":  "json",
+                        "vector_index":  true,
+                        "lookup_only":  false,
+                        "use_for":  [
+                                        "scripting-support",
+                                        "container-constrained-scripting",
+                                        "spine-level-scripting",
+                                        "dom-manipulation",
+                                        "layout-changes",
+                                        "security-and-privacy",
+                                        "script-elements"
+                                    ]
+                    },
+                    {
+                        "id":  "epubreader-net",
+                        "title":  "Free Online EPUB Reader | ePubReader.net",
+                        "priority":  "P3",
+                        "category":  "reading-systems",
+                        "source_type":  "third-party-reference",
+                        "url":  "https://epubreader.net/",
+                        "target_path":  "kb/references/epubreader/epubreader.net.html",
+                        "ingest_as":  "html",
+                        "vector_index":  true,
+                        "lookup_only":  true,
+                        "use_for":  [
+                                        "reading-system-observation",
+                                        "navigation-interoperability",
+                                        "rendering-behavior-reference"
+                                    ],
+                        "notes":  "Third-party reader reference. Use as non-normative implementation context; EPUB/W3C specifications remain authoritative."
+                    }
+                ],
+    "future_specs":  [
+                         {
+                             "title":  "EPUB 3.4",
+                             "url":  "https://www.w3.org/TR/epub-34/",
+                             "status":  "draft",
+                             "notes":  "Keep separate from production rules."
+                         },
+                         {
+                             "title":  "EPUB Reading Systems 3.4",
+                             "url":  "https://www.w3.org/TR/epub-rs-34/",
+                             "status":  "draft",
+                             "notes":  "Keep separate from production rules."
+                         },
+                         {
+                             "title":  "EPUB Accessibility 1.2",
+                             "url":  "https://www.w3.org/TR/epub-a11y-12/",
+                             "status":  "draft",
+                             "notes":  "Keep separate from production rules."
+                         }
+                     ]
+}

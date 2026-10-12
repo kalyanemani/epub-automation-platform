@@ -1,0 +1,1 @@
+{"issue_id":"T_HYPHENATION_WORD_MERGE","document_type":"epub","file":"OEBPS/12_9780700628889_Chapter03.xhtml","snippet":"Mc-Cain","candidate":"McCain","decision":"manual_review","reason":"Proper-name normalization should stay manual unless the exact canonical form is grounded elsewhere in trusted evidence."}

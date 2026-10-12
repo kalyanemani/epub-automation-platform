@@ -1,0 +1,591 @@
+{
+  "original": [
+    {
+      "id": "S_MIMETYPE",
+      "status": "pass",
+      "title": "Mimetype OK"
+    },
+    {
+      "id": "S_OPF_PATH",
+      "status": "pass",
+      "title": "OPF found"
+    },
+    {
+      "id": "S_VERSION",
+      "status": "pass",
+      "title": "EPUB version 3.0"
+    },
+    {
+      "id": "S_UNIQUE_ID",
+      "status": "pass",
+      "title": "Unique identifier OK"
+    },
+    {
+      "id": "S_MANIFEST_ITEMS_INVALID",
+      "status": "fail",
+      "title": "1 manifest item issue(s)"
+    },
+    {
+      "id": "S_SPINE_DUP_IDREFS",
+      "status": "fail",
+      "title": "Duplicate spine IDREFs"
+    },
+    {
+      "id": "S_BROKEN_INTERNAL_LINKS",
+      "status": "fail",
+      "title": "1+ broken internal links"
+    },
+    {
+      "id": "NCX_IDS_UNIQUE",
+      "status": "pass",
+      "title": "NCX IDs are unique"
+    },
+    {
+      "id": "NCX_SPINE_CONTENT_MISMATCH",
+      "status": "fail",
+      "title": "NCX missing content entries vs spine"
+    },
+    {
+      "id": "NCX_PAGELIST_PLAYORDER",
+      "status": "fail",
+      "title": "NCX pageList playOrder broken"
+    },
+    {
+      "id": "NCX_PAGELIST_VALUE_TEXT_MATCH",
+      "status": "pass",
+      "title": "NCX pageList value matches text"
+    },
+    {
+      "id": "NCX_PAGELIST_MONOTONIC",
+      "status": "pass",
+      "title": "NCX pageList page values are monotonically increasing"
+    },
+    {
+      "id": "NAV_SPINE_MISMATCH",
+      "status": "fail",
+      "title": "nav.xhtml TOC ≠ spine order"
+    },
+    {
+      "id": "NAV_PAGE_LIST",
+      "status": "pass",
+      "title": "40 page-list entries"
+    },
+    {
+      "id": "NCX_NAV_PAGELIST_MATCH",
+      "status": "pass",
+      "title": "NCX pageList matches nav.xhtml page-list"
+    },
+    {
+      "id": "UNREFERENCED_MEDIA",
+      "status": "warn",
+      "title": "1 unreferenced media files"
+    },
+    {
+      "id": "M_METADATA_CONTAINER",
+      "status": "pass",
+      "title": "Metadata container present"
+    },
+    {
+      "id": "M_IDENTIFIER",
+      "status": "pass",
+      "title": "Identifier present"
+    },
+    {
+      "id": "M_IDENTIFIER_ISBN",
+      "status": "pass",
+      "title": "Identifier looks like ISBN"
+    },
+    {
+      "id": "M_LANGUAGE",
+      "status": "pass",
+      "title": "Language present"
+    },
+    {
+      "id": "M_PUBLISHER",
+      "status": "pass",
+      "title": "Publisher present"
+    },
+    {
+      "id": "M_DATE",
+      "status": "warn",
+      "title": "Date format suspicious"
+    },
+    {
+      "id": "M_NAMESPACE",
+      "status": "pass",
+      "title": "Metadata namespaces look ok"
+    },
+    {
+      "id": "M_EPUB2_GUIDE",
+      "status": "warn",
+      "title": "EPUB2 <guide> element found"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "SMIL_",
+      "status": "warn",
+      "title": "No SMIL read-aloud files"
+    },
+    {
+      "id": "A_MANUAL",
+      "status": "warn",
+      "title": "Manual accessibility review required"
+    },
+    {
+      "id": "A_SCHEMA_ACCESSMODE_PRESENT",
+      "status": "pass",
+      "title": "schema:accessMode present"
+    },
+    {
+      "id": "A_SCHEMA_ACCESSIBILITYFEATURE_PRESENT",
+      "status": "pass",
+      "title": "schema:accessibilityFeature present"
+    },
+    {
+      "id": "A_SCHEMA_ACCESSIBILITYHAZARD_PRESENT",
+      "status": "pass",
+      "title": "schema:accessibilityHazard present"
+    },
+    {
+      "id": "T_HYPHENATION_WORD_MERGE",
+      "status": "pass",
+      "title": "Hyphenation and word-merge checks passed"
+    },
+    {
+      "id": "T_SPECIAL_CHAR_ENTITY",
+      "status": "pass",
+      "title": "Special character and entity checks passed"
+    },
+    {
+      "id": "T_MISSING_INCORRECT_TEXT",
+      "status": "pass",
+      "title": "Missing and incorrect text checks passed"
+    },
+    {
+      "id": "L_CSS_SYNTAX",
+      "status": "fail",
+      "title": "CSS syntax issues detected"
+    },
+    {
+      "id": "L_CSS_INVALID_DECLARATION",
+      "status": "fail",
+      "title": "Invalid or unsupported CSS declarations found"
+    },
+    {
+      "id": "L_FONT_VARIANTS",
+      "status": "warn",
+      "title": "Expected font variants are not rendering correctly"
+    },
+    {
+      "id": "JS_VALIDATION_PASSED",
+      "status": "pass",
+      "title": "JavaScript validation passed"
+    }
+  ],
+  "fixed": [
+    {
+      "id": "S_MIMETYPE",
+      "status": "pass",
+      "title": "Mimetype OK"
+    },
+    {
+      "id": "S_OPF_PATH",
+      "status": "pass",
+      "title": "OPF found"
+    },
+    {
+      "id": "S_VERSION",
+      "status": "pass",
+      "title": "EPUB version 3.0"
+    },
+    {
+      "id": "S_UNIQUE_ID",
+      "status": "pass",
+      "title": "Unique identifier OK"
+    },
+    {
+      "id": "S_BROKEN_INTERNAL_LINKS",
+      "status": "fail",
+      "title": "1+ broken internal links"
+    },
+    {
+      "id": "NCX_IDS_UNIQUE",
+      "status": "pass",
+      "title": "NCX IDs are unique"
+    },
+    {
+      "id": "NCX_SPINE_MATCH",
+      "status": "pass",
+      "title": "NCX matches spine"
+    },
+    {
+      "id": "NCX_PAGELIST_PLAYORDER_OK",
+      "status": "pass",
+      "title": "NCX pageList playOrder OK"
+    },
+    {
+      "id": "NCX_PAGELIST_VALUE_TEXT_MATCH",
+      "status": "pass",
+      "title": "NCX pageList value matches text"
+    },
+    {
+      "id": "NCX_PAGELIST_MONOTONIC",
+      "status": "pass",
+      "title": "NCX pageList page values are monotonically increasing"
+    },
+    {
+      "id": "NAV_SPINE_MATCH",
+      "status": "pass",
+      "title": "nav.xhtml matches spine"
+    },
+    {
+      "id": "NAV_PAGE_LIST",
+      "status": "pass",
+      "title": "40 page-list entries"
+    },
+    {
+      "id": "NCX_NAV_PAGELIST_MATCH",
+      "status": "pass",
+      "title": "NCX pageList matches nav.xhtml page-list"
+    },
+    {
+      "id": "UNREFERENCED_MEDIA",
+      "status": "warn",
+      "title": "1 unreferenced media files"
+    },
+    {
+      "id": "M_METADATA_CONTAINER",
+      "status": "pass",
+      "title": "Metadata container present"
+    },
+    {
+      "id": "M_IDENTIFIER",
+      "status": "pass",
+      "title": "Identifier present"
+    },
+    {
+      "id": "M_IDENTIFIER_ISBN",
+      "status": "pass",
+      "title": "Identifier looks like ISBN"
+    },
+    {
+      "id": "M_LANGUAGE",
+      "status": "pass",
+      "title": "Language present"
+    },
+    {
+      "id": "M_PUBLISHER",
+      "status": "pass",
+      "title": "Publisher present"
+    },
+    {
+      "id": "M_DATE",
+      "status": "warn",
+      "title": "Date format suspicious"
+    },
+    {
+      "id": "M_NAMESPACE",
+      "status": "pass",
+      "title": "Metadata namespaces look ok"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "Media_IMAGE_ALT_Present",
+      "status": "pass",
+      "title": "<img> alt text present"
+    },
+    {
+      "id": "Media_IMAGE_VALID",
+      "status": "pass",
+      "title": "Image OK"
+    },
+    {
+      "id": "SMIL_",
+      "status": "warn",
+      "title": "No SMIL read-aloud files"
+    },
+    {
+      "id": "A_MANUAL",
+      "status": "warn",
+      "title": "Manual accessibility review required"
+    },
+    {
+      "id": "A_SCHEMA_ACCESSMODE_PRESENT",
+      "status": "pass",
+      "title": "schema:accessMode present"
+    },
+    {
+      "id": "A_SCHEMA_ACCESSIBILITYFEATURE_PRESENT",
+      "status": "pass",
+      "title": "schema:accessibilityFeature present"
+    },
+    {
+      "id": "A_SCHEMA_ACCESSIBILITYHAZARD_PRESENT",
+      "status": "pass",
+      "title": "schema:accessibilityHazard present"
+    },
+    {
+      "id": "T_HYPHENATION_WORD_MERGE",
+      "status": "pass",
+      "title": "Hyphenation and word-merge checks passed"
+    },
+    {
+      "id": "T_SPECIAL_CHAR_ENTITY",
+      "status": "pass",
+      "title": "Special character and entity checks passed"
+    },
+    {
+      "id": "T_MISSING_INCORRECT_TEXT",
+      "status": "pass",
+      "title": "Missing and incorrect text checks passed"
+    },
+    {
+      "id": "L_CSS_SYNTAX",
+      "status": "fail",
+      "title": "CSS syntax issues detected"
+    },
+    {
+      "id": "L_CSS_INVALID_DECLARATION",
+      "status": "fail",
+      "title": "Invalid or unsupported CSS declarations found"
+    },
+    {
+      "id": "L_FONT_VARIANTS",
+      "status": "warn",
+      "title": "Expected font variants are not rendering correctly"
+    },
+    {
+      "id": "JS_VALIDATION_PASSED",
+      "status": "pass",
+      "title": "JavaScript validation passed"
+    }
+  ]
+}

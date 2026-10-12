@@ -1,0 +1,330 @@
+<title>EPUB Validation — Complete Issue Reference</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b0f1a;color:#e2e8f0;padding:24px 16px}
+h1{font-size:1.4rem;font-weight:700;color:#f8fafc;text-align:center;margin-bottom:4px}
+.sub{text-align:center;color:#64748b;font-size:0.82rem;margin-bottom:24px}
+/* stat bar */
+.stats{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.stat{background:#1e2330;border:1px solid #2d3748;border-radius:10px;padding:10px 20px;text-align:center}
+.stat-num{font-size:1.5rem;font-weight:800;line-height:1}
+.stat-lbl{font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+/* section */
+.section{background:#1e2330;border:1px solid #2d3748;border-radius:12px;margin-bottom:16px;overflow:hidden}
+.sec-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none}
+.sec-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;flex-shrink:0}
+.sec-title{font-weight:700;font-size:0.95rem;flex:1}
+.sec-count{font-size:0.72rem;color:#64748b}
+.sec-chevron{color:#475569;font-size:0.8rem;transition:transform .2s}
+.sec-body{padding:0 14px 14px}
+/* table */
+table{width:100%;border-collapse:collapse;font-size:0.77rem}
+th{text-align:left;color:#475569;font-weight:600;padding:6px 8px;border-bottom:1px solid #1e293b;font-size:0.68rem;text-transform:uppercase;letter-spacing:.04em}
+td{padding:5px 8px;border-bottom:1px solid #111827;vertical-align:top;line-height:1.45}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#151c2c}
+.rule-id{font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:0.71rem;color:#93c5fd;white-space:nowrap}
+.desc{color:#cbd5e1}
+.trigger{color:#94a3b8;font-size:0.72rem}
+/* severity badges */
+.sev{display:inline-block;padding:1px 7px;border-radius:999px;font-size:0.65rem;font-weight:700;white-space:nowrap}
+.sev-fail{background:#450a0a;color:#f87171}
+.sev-warn{background:#431407;color:#fb923c}
+.sev-pass{background:#14532d;color:#4ade80}
+/* autofix badges */
+.fix{display:inline-block;padding:1px 7px;border-radius:999px;font-size:0.63rem;font-weight:700;white-space:nowrap}
+.fix-auto{background:#1e3a5f;color:#60a5fa}
+.fix-llm{background:#2e1065;color:#c084fc}
+.fix-hitl{background:#1e293b;color:#64748b}
+/* search */
+.search-wrap{margin-bottom:16px;text-align:center}
+input[type=text]{background:#1e2330;border:1px solid #334155;color:#e2e8f0;border-radius:8px;padding:8px 14px;font-size:0.85rem;width:100%;max-width:480px;outline:none}
+input[type=text]:focus{border-color:#3b82f6}
+input[type=text]::placeholder{color:#475569}
+/* color themes per section */
+.th-m .sec-icon{background:#1e3a5f;color:#60a5fa} .th-m .sec-header{border-left:3px solid #3b82f6}
+.th-s .sec-icon{background:#14532d;color:#4ade80} .th-s .sec-header{border-left:3px solid #22c55e}
+.th-a .sec-icon{background:#431407;color:#fb923c} .th-a .sec-header{border-left:3px solid #f97316}
+.th-l .sec-icon{background:#2e1065;color:#c084fc} .th-l .sec-header{border-left:3px solid #a855f7}
+.th-js .sec-icon{background:#1a2e1a;color:#6ee7b7} .th-js .sec-header{border-left:3px solid #10b981}
+.th-t .sec-icon{background:#1a1a2e;color:#a78bfa} .th-t .sec-header{border-left:3px solid #8b5cf6}
+.th-v .sec-icon{background:#0d3a3a;color:#2dd4bf} .th-v .sec-header{border-left:3px solid #14b8a6}
+.th-media .sec-icon{background:#3b1a0a;color:#fbbf24} .th-media .sec-header{border-left:3px solid #f59e0b}
+/* hide rows */
+.hidden-row{display:none}
+</style>
+
+<h1>EPUB Validation — Complete Issue Reference</h1>
+<p class="sub">All issues the validation engine can detect, with severity and autofix routing</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num" style="color:#f87171">80+</div><div class="stat-lbl">Fail rules</div></div>
+  <div class="stat"><div class="stat-num" style="color:#fb923c">50+</div><div class="stat-lbl">Warning rules</div></div>
+  <div class="stat"><div class="stat-num" style="color:#60a5fa">8</div><div class="stat-lbl">Check modules</div></div>
+  <div class="stat"><div class="stat-num" style="color:#c084fc">60+</div><div class="stat-lbl">Auto-fixable</div></div>
+</div>
+
+<div class="search-wrap">
+  <input type="text" id="search" placeholder="Search rule ID or description…" oninput="filterRules(this.value)"/>
+</div>
+
+<!-- ── METADATA ── -->
+<div class="section th-m" id="sec-m">
+<div class="sec-header" onclick="toggle('sec-m')">
+  <div class="sec-icon">M</div>
+  <div class="sec-title">Metadata Checks — OPF / Dublin Core</div>
+  <div class="sec-count">17 rules</div>
+  <div class="sec-chevron" id="chev-sec-m">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">M_IDENTIFIER</td><td class="desc">Missing or mismatched identifier</td><td class="trigger">No dc:identifier found, or unique-identifier attr doesn't match identifier element</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_IDENTIFIER_FORMAT</td><td class="desc">Identifier format unknown (not UUID or ISBN)</td><td class="trigger">Identifier doesn't match UUID URN or ISBN-13 pattern</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">M_LANGUAGE</td><td class="desc">Missing language or suspicious BCP-47 tag</td><td class="trigger">No dc:language, or value isn't a valid BCP-47 language code</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_PUBLISHER</td><td class="desc">Missing publisher</td><td class="trigger">No dc:publisher or dcterms:publisher meta element</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_DATE</td><td class="desc">Missing or badly formatted publication date</td><td class="trigger">No dc:date, or value is not ISO 8601 format (YYYY-MM-DD)</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">M_DUPLICATES</td><td class="desc">Duplicate metadata entries</td><td class="trigger">Multiple dc:identifier, dc:language, or dc:title values</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_NAMESPACE</td><td class="desc">Suspicious metadata namespace declarations</td><td class="trigger">Missing Dublin Core or OPF namespace in the OPF file</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">M_EPUB2_GUIDE</td><td class="desc">Deprecated EPUB2 &lt;guide&gt; element present</td><td class="trigger">OPF file contains &lt;guide&gt; element (obsolete in EPUB3)</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">M_RENDITION_LAYOUT</td><td class="desc">Rendition layout value unexpected</td><td class="trigger">meta property="rendition:layout" has a value other than "reflowable" or "pre-paginated"</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_RENDITION_ORIENTATION</td><td class="desc">Rendition orientation declared</td><td class="trigger">meta property="rendition:orientation" present — may affect reading experience</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_RENDITION_SPREAD</td><td class="desc">Rendition spread declared</td><td class="trigger">meta property="rendition:spread" present</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">M_METADATA_CONTAINER</td><td class="desc">Missing metadata container</td><td class="trigger">OPF &lt;metadata&gt; element is absent or empty</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">M_OPF</td><td class="desc">OPF could not be parsed for metadata</td><td class="trigger">OPF file is missing or invalid XML before metadata checks run</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">M_DISPLAY_SEQ</td><td class="desc">Invalid display-seq value</td><td class="trigger">belongs-to-collection display-seq is not a positive integer</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── STRUCTURE ── -->
+<div class="section th-s" id="sec-s">
+<div class="sec-header" onclick="toggle('sec-s')">
+  <div class="sec-icon">S</div>
+  <div class="sec-title">Structure Checks — Manifest, Spine, NCX, NAV</div>
+  <div class="sec-count">42 rules</div>
+  <div class="sec-chevron" id="chev-sec-s">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">S_MIMETYPE_MISSING</td><td class="desc">mimetype file absent</td><td class="trigger">No mimetype file at the EPUB root</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_MIMETYPE_CONTENT</td><td class="desc">Wrong mimetype content</td><td class="trigger">mimetype file doesn't contain exactly "application/epub+zip"</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_CONTAINER_MISSING</td><td class="desc">Missing META-INF/container.xml</td><td class="trigger">container.xml not found in META-INF/</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_OPF_MISSING</td><td class="desc">OPF package file missing</td><td class="trigger">container.xml references an OPF path that doesn't exist</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_OPF_INVALID</td><td class="desc">OPF is invalid XML</td><td class="trigger">OPF fails XML parsing or has no &lt;package&gt; root element</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_UNIQUE_ID_INVALID</td><td class="desc">Invalid unique-identifier reference</td><td class="trigger">package@unique-identifier doesn't match any dc:identifier/@id</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_MANIFEST_EMPTY</td><td class="desc">Empty manifest</td><td class="trigger">&lt;manifest&gt; has no &lt;item&gt; children</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_MANIFEST_DUP_IDS</td><td class="desc">Duplicate manifest item IDs</td><td class="trigger">Two or more &lt;item&gt; elements share the same @id</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_MANIFEST_ITEMS_INVALID</td><td class="desc">Manifest item issues (missing id/href, file not found, media-type mismatch)</td><td class="trigger">&lt;item&gt; missing id/href/media-type OR referenced file doesn't exist OR wrong media-type</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_SPINE_EMPTY</td><td class="desc">Empty spine</td><td class="trigger">&lt;spine&gt; has no &lt;itemref&gt; children</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_SPINE_DUP_IDREFS</td><td class="desc">Duplicate spine IDREFs</td><td class="trigger">Multiple &lt;itemref&gt; elements point to the same manifest item</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_SPINE_ITEMREFS_INVALID</td><td class="desc">Spine itemref issues</td><td class="trigger">itemref@idref invalid, not in manifest, or @linear has invalid value</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_SPINE_OUT_OF_ORDER</td><td class="desc">Spine reading order vs manifest out of sync</td><td class="trigger">&gt;30% of spine items appear in a different order than manifest declaration</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_ORPHAN_FILES</td><td class="desc">Undeclared files in EPUB</td><td class="trigger">Content files present in the ZIP but not listed in the manifest</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_BROKEN_INTERNAL_LINKS</td><td class="desc">Broken internal links</td><td class="trigger">href/src targets in content files don't resolve to any manifest item</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_NO_NAVIGATION</td><td class="desc">Missing navigation document</td><td class="trigger">No NCX file and no nav.xhtml with epub:type="toc" (fail for EPUB3, warn for EPUB2)</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">MULTIPLE_COVERS</td><td class="desc">Multiple cover images declared</td><td class="trigger">More than one manifest &lt;item properties="cover-image"&gt;</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">UNREFERENCED_MEDIA</td><td class="desc">Unreferenced media files</td><td class="trigger">Images/fonts/audio in manifest but never referenced in any HTML or CSS</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_DUPLICATE_IDS</td><td class="desc">Duplicate IDs in NCX</td><td class="trigger">Same @id appears more than once across navMap/pageList elements</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_PLAYORDER_INVALID</td><td class="desc">NCX navMap playOrder broken</td><td class="trigger">playOrder has gaps, duplicates, or doesn't start at 1</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_PHANTOM_ENTRIES</td><td class="desc">NCX entries link to files not in spine</td><td class="trigger">NCX navMap content@src targets a file absent from the spine</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_SPINE_MISMATCH</td><td class="desc">NCX order ≠ spine order</td><td class="trigger">Relative order of shared files differs between NCX navMap and &lt;spine&gt;</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_SPINE_CONTENT_MISMATCH</td><td class="desc">Spine content files missing from NCX</td><td class="trigger">Content-like files listed in spine but not present in NCX navMap</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_PAGELIST_PLAYORDER</td><td class="desc">NCX pageList playOrder broken</td><td class="trigger">pageList playOrder has gaps/duplicates or doesn't continue from navMap numbering</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_PAGELIST_VALUE_TEXT_MISMATCH</td><td class="desc">NCX pageList value ≠ label text</td><td class="trigger">@value attribute doesn't match &lt;navLabel&gt; text for a page entry</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_PAGELIST_NOT_MONOTONIC</td><td class="desc">NCX page numbers not increasing</td><td class="trigger">Page numbers decline or mix roman/arabic numerals inconsistently</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">NCX_IDS_UNIQUE</td><td class="desc">NCX IDs verified unique</td><td class="trigger">All NCX element IDs pass uniqueness check</td><td><span class="sev sev-pass">pass</span></td><td>—</td></tr>
+<tr><td class="rule-id">NAV_TOC_PHANTOM_ENTRIES</td><td class="desc">nav.xhtml TOC links to files not in spine</td><td class="trigger">Files in nav TOC section are absent from the spine</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NAV_SPINE_MISMATCH</td><td class="desc">nav.xhtml TOC order ≠ spine order</td><td class="trigger">Relative order of shared files differs between nav TOC and spine</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">NCX_NAV_PAGELIST_MISMATCH</td><td class="desc">NCX pageList ≠ nav.xhtml page-list</td><td class="trigger">Page lists in NCX and nav.xhtml don't match in order or values</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">S_GUIDE_INVALID</td><td class="desc">EPUB2 guide element has invalid entries</td><td class="trigger">Guide &lt;reference&gt; has invalid @type or @href</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">S_SPINE_NO_TOC</td><td class="desc">EPUB2 spine missing @toc attribute</td><td class="trigger">EPUB2 &lt;spine&gt; element has no toc attribute pointing to NCX</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── MEDIA ── -->
+<div class="section th-media" id="sec-media">
+<div class="sec-header" onclick="toggle('sec-media')">
+  <div class="sec-icon">Me</div>
+  <div class="sec-title">Media Checks — Images, Audio, Video</div>
+  <div class="sec-count">27 rules</div>
+  <div class="sec-chevron" id="chev-sec-media">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">Media_IMAGE_NO_SRC</td><td class="desc">&lt;img&gt; missing src attribute</td><td class="trigger">&lt;img&gt; tag with no src attribute in HTML</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">Media_IMAGE_NO_ALT</td><td class="desc">&lt;img&gt; missing alt text</td><td class="trigger">&lt;img&gt; with no alt attribute or empty alt=""</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM (vision)</span></td></tr>
+<tr><td class="rule-id">Media_IMAGE_MISSING_FILE</td><td class="desc">Image file not found on disk</td><td class="trigger">img src path doesn't resolve to an existing file</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_IMAGE_EMPTY</td><td class="desc">Image file is empty (0 bytes)</td><td class="trigger">Image file exists but has zero bytes</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_src</td><td class="desc">&lt;audio&gt; missing src</td><td class="trigger">&lt;audio&gt; with no src and no &lt;source&gt; children</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_controls</td><td class="desc">&lt;audio&gt; missing controls attribute</td><td class="trigger">&lt;audio&gt; element without controls attr — inaccessible to keyboard/AT users</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">Media_audio_file</td><td class="desc">Audio file missing</td><td class="trigger">Audio src path doesn't exist on disk</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_empty</td><td class="desc">Audio file is empty</td><td class="trigger">Audio file exists but has 0 bytes</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_corrupt</td><td class="desc">Audio file corrupt or unreadable</td><td class="trigger">ffprobe fails to parse the audio file</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_no_stream</td><td class="desc">No audio stream in audio file</td><td class="trigger">File has audio extension but ffprobe finds no audio stream</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_duration</td><td class="desc">Audio duration is 0</td><td class="trigger">ffprobe returns duration ≤ 0</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_audio_silent</td><td class="desc">Audio appears silent</td><td class="trigger">Detected bitrate is very low (&lt;1000 bps)</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_missing_control</td><td class="desc">&lt;video&gt; missing controls attribute</td><td class="trigger">&lt;video&gt; element without controls attribute</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">Media_missing_poster</td><td class="desc">&lt;video&gt; missing poster image</td><td class="trigger">&lt;video&gt; without poster attribute — no preview frame</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_video_missing</td><td class="desc">&lt;video&gt; missing src</td><td class="trigger">&lt;video&gt; with no src and no &lt;source&gt; child elements</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_missing_file</td><td class="desc">Video file missing from disk</td><td class="trigger">Video src path doesn't resolve to an existing file</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_file_empty</td><td class="desc">Video file empty</td><td class="trigger">Video file has 0 bytes</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_video_unreadable</td><td class="desc">Video file corrupt</td><td class="trigger">ffprobe fails to parse the video file</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_no_stream</td><td class="desc">No video stream inside file</td><td class="trigger">Video file contains no video stream according to ffprobe</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_no_audio</td><td class="desc">Video has no audio track</td><td class="trigger">Video file has video stream but no audio stream</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">Media_video_duration</td><td class="desc">Video duration is 0</td><td class="trigger">ffprobe returns video duration ≤ 0</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">SMIL_</td><td class="desc">No SMIL overlay files found</td><td class="trigger">No .smil files in manifest — media overlays unavailable</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── ACCESSIBILITY ── -->
+<div class="section th-a" id="sec-a">
+<div class="sec-header" onclick="toggle('sec-a')">
+  <div class="sec-icon">A</div>
+  <div class="sec-title">Accessibility Checks — ARIA, Schema, Landmarks</div>
+  <div class="sec-count">9 rules</div>
+  <div class="sec-chevron" id="chev-sec-a">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">A_SCHEMA:ACCESSMODE_MISSING</td><td class="desc">Missing schema:accessMode OPF metadata</td><td class="trigger">OPF lacks &lt;meta property="schema:accessMode"&gt; — required for EPUB accessibility conformance</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">A_SCHEMA:ACCESSIBILITYFEATURE_MISSING</td><td class="desc">Missing schema:accessibilityFeature</td><td class="trigger">OPF lacks &lt;meta property="schema:accessibilityFeature"&gt;</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">A_SCHEMA:ACCESSIBILITYHAZARD_MISSING</td><td class="desc">Missing schema:accessibilityHazard</td><td class="trigger">OPF lacks &lt;meta property="schema:accessibilityHazard"&gt;</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">A_HTML_LANG_MISSING</td><td class="desc">&lt;html&gt; missing lang attribute</td><td class="trigger">One or more XHTML content files have &lt;html&gt; without lang="…" attribute</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">A_LINK_TEXT_MISSING</td><td class="desc">Links without accessible text</td><td class="trigger">&lt;a&gt; elements with no text content, no aria-label, and no title</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">A_MANUAL</td><td class="desc">Manual accessibility review required</td><td class="trigger">Color contrast, reading order, and screen-reader experience require human evaluation with a rendering engine</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">IMG_ALT_MISSING</td><td class="desc">Image missing alt text (accessibility variant)</td><td class="trigger">Same as Media_IMAGE_NO_ALT — emitted when detected via accessibility check path</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM (vision)</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── LAYOUT ── -->
+<div class="section th-l" id="sec-l">
+<div class="sec-header" onclick="toggle('sec-l')">
+  <div class="sec-icon">L</div>
+  <div class="sec-title">Layout Checks — CSS, Fonts, Typography, Responsive</div>
+  <div class="sec-count">22 rules</div>
+  <div class="sec-chevron" id="chev-sec-l">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">L_CSS_SYNTAX</td><td class="desc">CSS syntax errors</td><td class="trigger">Mismatched braces, invalid selector lists, or parse errors in stylesheet</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_CSS_INVALID_DECLARATION</td><td class="desc">Invalid or unsupported CSS property/value</td><td class="trigger">Property/value pair not recognized as valid CSS (wrong units, unknown property)</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_CSS_REFERENCE_MISSING</td><td class="desc">HTML file has no stylesheet link</td><td class="trigger">XHTML content file has no &lt;link rel="stylesheet"&gt; or &lt;style&gt; when CSS files exist in EPUB</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_CSS_REFERENCE_BROKEN</td><td class="desc">Broken stylesheet reference</td><td class="trigger">&lt;link href="…"&gt; points to a CSS file that doesn't exist</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_CSS_CLASS_SELECTOR_MISSING</td><td class="desc">Referenced CSS class not defined</td><td class="trigger">HTML uses class="foo" but .foo {} is never defined in any linked stylesheet</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_FONT_EMBED_REFERENCE</td><td class="desc">@font-face declaration incomplete</td><td class="trigger">@font-face missing src URL, or the referenced font file doesn't exist on disk</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_FONT_FALLBACK</td><td class="desc">Unexpected font fallback</td><td class="trigger">Embedded font family declared in @font-face but not actually used in body text rules</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_FONT_VARIANTS</td><td class="desc">Font variants not rendering (bold/italic)</td><td class="trigger">&lt;em&gt; or &lt;i&gt; don't compute to italic, &lt;strong&gt; or &lt;b&gt; don't compute to bold</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_FONT_CONSISTENCY</td><td class="desc">Inconsistent body font across chapters</td><td class="trigger">More than 3 different font-family values used for body text across content files</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_HEADING_HIERARCHY</td><td class="desc">Heading level skipped or size mismatch</td><td class="trigger">h1→h3 gap (h2 missing), or heading font-size ≤ body font-size</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_HEADING_CONSISTENCY</td><td class="desc">Heading styling inconsistent across files</td><td class="trigger">Same heading level (e.g. h2) has font-size varying &gt;20% between different chapter files</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_INLINE_STYLE_CONFLICT</td><td class="desc">Inline styles override global CSS</td><td class="trigger">style="…" attribute on an element conflicts with rules in the linked stylesheet</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_PARAGRAPH_SPACING</td><td class="desc">Paragraph line spacing too tight</td><td class="trigger">Average computed line-height &lt; font-size × 1.2 (below WCAG 1.4.12 minimum)</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_TABLE_RESPONSIVE</td><td class="desc">Table overflows on narrow screens</td><td class="trigger">Table has fixed pixel width or width exceeds viewport — causes horizontal scroll</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_TABLE_STRUCTURE</td><td class="desc">Table rows have inconsistent cell counts</td><td class="trigger">Row cell counts vary significantly — broken column alignment</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_TABLE_STYLING</td><td class="desc">Table spacing too tight</td><td class="trigger">Cell padding &lt; 2px or no borders — content visually runs together</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_LIST_STYLING</td><td class="desc">List markers removed</td><td class="trigger">list-style-type: none applied — bullets/numbers not visible to reader</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_BLOCKQUOTE_STYLING</td><td class="desc">Blockquotes not visually differentiated</td><td class="trigger">blockquote has low margin/padding and no italic — indistinguishable from body text</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_CODE_BLOCK_STYLING</td><td class="desc">Code blocks not formatted consistently</td><td class="trigger">pre/code elements missing monospace font or white-space: pre — code wraps incorrectly</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_NO_CSS</td><td class="desc">No standalone CSS files in EPUB</td><td class="trigger">No .css files found in manifest — all styling would be inline only</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── VISUAL ── -->
+<div class="section th-v" id="sec-v">
+<div class="sec-header" onclick="toggle('sec-v')">
+  <div class="sec-icon">V</div>
+  <div class="sec-title">Visual Layout Checks — Browser Render (Chromium)</div>
+  <div class="sec-count">8 rules</div>
+  <div class="sec-chevron" id="chev-sec-v">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">L_RESPONSIVE_HORIZONTAL_SCROLL</td><td class="desc">Page causes horizontal scroll</td><td class="trigger">Chromium reports scrollWidth &gt; viewport width when rendering the file</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_RESPONSIVE_TEXT_CLIPPING</td><td class="desc">Text clipped by viewport overflow</td><td class="trigger">Element extends past viewport edge with overflow hidden/clip — content invisible</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_LAYOUT_OVERLAP</td><td class="desc">Content blocks overlapping</td><td class="trigger">Two or more rendered elements occupy the same screen coordinates</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_IMAGE_RENDERING</td><td class="desc">Image rendering issues</td><td class="trigger">Aspect ratio distorted &gt;10%, image upscaled beyond native resolution, or image overflows viewport</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">L_VISUAL_RENDER_FAILURE</td><td class="desc">Chromium render crashed for a chapter</td><td class="trigger">Browser threw an exception when rendering a specific content file</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+<tr><td class="rule-id">L_VISUAL_RENDER_UNAVAILABLE</td><td class="desc">Visual validation unavailable</td><td class="trigger">Chromium could not be launched (headless browser not installed in environment)</td><td><span class="sev sev-warn">warn</span></td><td>—</td></tr>
+<tr><td class="rule-id">L_VISUAL_READER_COVERAGE</td><td class="desc">Visual validation limited to Chromium profile</td><td class="trigger">Always emitted when visual checks run — notes that results are Chromium-only</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── JAVASCRIPT ── -->
+<div class="section th-js" id="sec-js">
+<div class="sec-header" onclick="toggle('sec-js')">
+  <div class="sec-icon">JS</div>
+  <div class="sec-title">Script Checks — JavaScript References &amp; Syntax</div>
+  <div class="sec-count">10 rules</div>
+  <div class="sec-chevron" id="chev-sec-js">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">JS_SCRIPT_SYNTAX</td><td class="desc">JavaScript syntax error</td><td class="trigger">vm.Script parse fails on JS file — code is malformed and won't execute</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_UNSUPPORTED_API</td><td class="desc">Reading-system-sensitive APIs used</td><td class="trigger">Code uses eval(), fetch(), XMLHttpRequest, WebSocket, localStorage, or similar restricted APIs</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_MODULE_SCRIPT</td><td class="desc">ES module scripts may not be portable</td><td class="trigger">&lt;script type="module"&gt; detected — not supported in all EPUB reading systems</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_REMOTE_SCRIPT_REFERENCE</td><td class="desc">Remote JavaScript not packaged</td><td class="trigger">&lt;script src="https://…"&gt; — external URL won't resolve when book is offline</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_SCRIPT_REFERENCE_BROKEN</td><td class="desc">Script src reference broken</td><td class="trigger">&lt;script src="…"&gt; points to a file that doesn't exist in the EPUB</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_SCRIPT_REFERENCE_MISSING_MANIFEST</td><td class="desc">Script file exists but not in manifest</td><td class="trigger">JS file exists on disk but is not declared as an &lt;item&gt; in the OPF manifest</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_INLINE_SCRIPT</td><td class="desc">Inline JavaScript present</td><td class="trigger">&lt;script&gt;…code…&lt;/script&gt; without a src attribute — some reading systems block inline JS</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_EVENT_HANDLER_ATTRIBUTE</td><td class="desc">Inline event handler attributes</td><td class="trigger">onclick=, onload=, onerror=, etc. attributes found on HTML elements</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_SCRIPT_MANIFEST_MISSING_FILE</td><td class="desc">Manifest-declared script file missing on disk</td><td class="trigger">OPF declares a JS &lt;item&gt; but the actual file doesn't exist</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">JS_EXTERNAL_SCRIPT_MISSING</td><td class="desc">External script reference unresolvable</td><td class="trigger">Script src is an external path that can't be resolved within the EPUB package</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ── TEXT ── -->
+<div class="section th-t" id="sec-t">
+<div class="sec-header" onclick="toggle('sec-t')">
+  <div class="sec-icon">T</div>
+  <div class="sec-title">Text Content Checks — OCR, Hyphenation, Special Characters</div>
+  <div class="sec-count">4 rules</div>
+  <div class="sec-chevron" id="chev-sec-t">▼</div>
+</div>
+<div class="sec-body">
+<table>
+<tr><th>Rule ID</th><th>Issue Description</th><th>What triggers it</th><th>Severity</th><th>Autofix</th></tr>
+<tr><td class="rule-id">T_HYPHENATION_WORD_MERGE</td><td class="desc">Broken hyphenation or word merging</td><td class="trigger">Soft-hyphen word breaks left dangling across line wraps, or words merged without spaces (OCR artifact)</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">T_SPECIAL_CHAR_ENTITY</td><td class="desc">Special character or entity corruption</td><td class="trigger">Corrupted HTML entities (&amp;amp;amp;), invalid Unicode code points, or control characters in text</td><td><span class="sev sev-fail">fail</span></td><td><span class="fix fix-auto">AUTO</span></td></tr>
+<tr><td class="rule-id">T_MISSING_INCORRECT_TEXT</td><td class="desc">Missing or incorrect text detected</td><td class="trigger">Placeholder text ("Lorem ipsum", "TODO", "[MISSING]"), OCR junk tokens, or high-confidence spelling errors</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-llm">LLM</span></td></tr>
+<tr><td class="rule-id">T_CONTENT_DOCS</td><td class="desc">No text content documents found</td><td class="trigger">Spine has no XHTML/HTML files, or all content files are empty</td><td><span class="sev sev-warn">warn</span></td><td><span class="fix fix-hitl">HITL</span></td></tr>
+</table>
+</div>
+</div>
+
+<script>
+function toggle(id) {
+  const body = document.querySelector('#'+id+' .sec-body');
+  const chev = document.getElementById('chev-'+id);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : '';
+  chev.textContent = open ? '▶' : '▼';
+}
+
+function filterRules(q) {
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('table tr:not(:first-child)').forEach(row => {
+    if (!q) { row.classList.remove('hidden-row'); return; }
+    const text = row.textContent.toLowerCase();
+    row.classList.toggle('hidden-row', !text.includes(q));
+  });
+  // Show section if it has visible rows
+  document.querySelectorAll('.section').forEach(sec => {
+    const visible = sec.querySelectorAll('tr:not(:first-child):not(.hidden-row)').length;
+    const body = sec.querySelector('.sec-body');
+    if (q) body.style.display = visible ? '' : 'none';
+  });
+}
+</script>

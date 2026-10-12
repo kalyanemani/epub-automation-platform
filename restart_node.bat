@@ -1,0 +1,6 @@
+@echo off
+set "REDIS_URL=redis://localhost:6379"
+set "SHORT_TERM_MEMORY_TTL_SECONDS=21600"
+set "RUN_CONTEXT_TTL_SECONDS=21600"
+set "PROMPT_CACHE_TTL_SECONDS=86400"
+start "Node9000" cmd /k "cd /d C:\Users\krishkal\Desktop\epub_backend\EPUB-Analysis && set NODE_API_URL=http://localhost:9000 && set PYTHON_API_URL=http://localhost:8001 && set REDIS_URL=%REDIS_URL% && set SHORT_TERM_MEMORY_TTL_SECONDS=%SHORT_TERM_MEMORY_TTL_SECONDS% && set RUN_CONTEXT_TTL_SECONDS=%RUN_CONTEXT_TTL_SECONDS% && set PROMPT_CACHE_TTL_SECONDS=%PROMPT_CACHE_TTL_SECONDS% && node server.js"

@@ -1,0 +1,51 @@
+{
+  "version": "2026-04-13",
+  "notes": [
+    "Use these as bounded OCR hints, not as unconditional replacements.",
+    "Auto-apply only when surrounding evidence or confidence thresholds support the change."
+  ],
+  "digit_to_letter": {
+    "0": [
+      "o"
+    ],
+    "1": [
+      "i",
+      "l"
+    ],
+    "5": [
+      "s"
+    ],
+    "8": [
+      "b"
+    ]
+  },
+  "letter_to_digit": {
+    "o": [
+      "0"
+    ],
+    "i": [
+      "1"
+    ],
+    "l": [
+      "1"
+    ],
+    "s": [
+      "5"
+    ],
+    "b": [
+      "8"
+    ]
+  },
+  "common_pairs": [
+    {
+      "from": "rn",
+      "to": "m",
+      "notes": "Common OCR merge"
+    },
+    {
+      "from": "cl",
+      "to": "d",
+      "notes": "Context-sensitive, review carefully"
+    }
+  ]
+}

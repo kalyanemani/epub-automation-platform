@@ -1,0 +1,343 @@
+<title>EPUB Autofix — LLM Call Analysis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 28px 20px; }
+  h1 { font-size: 1.5rem; font-weight: 700; color: #f8fafc; margin-bottom: 6px; }
+  .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 28px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1100px; margin: 0 auto; }
+  @media(max-width:720px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: #1e2330; border-radius: 12px; padding: 20px; border: 1px solid #2d3748; }
+  .card h2 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin-bottom: 14px; }
+  .card h3 { font-size: 1rem; font-weight: 600; color: #f1f5f9; margin-bottom: 2px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; letter-spacing: .03em; }
+  .badge-green  { background: #14532d; color: #4ade80; }
+  .badge-blue   { background: #1e3a5f; color: #60a5fa; }
+  .badge-orange { background: #431407; color: #fb923c; }
+  .badge-purple { background: #2e1065; color: #c084fc; }
+  .badge-red    { background: #450a0a; color: #f87171; }
+  .badge-gray   { background: #1e293b; color: #94a3b8; }
+
+  /* pipeline */
+  .pipeline { display: flex; flex-direction: column; gap: 0; max-width: 1100px; margin: 0 auto 24px; }
+  .step { display: flex; align-items: flex-start; gap: 16px; padding: 14px 18px; background: #1e2330; border: 1px solid #2d3748; border-radius: 10px; margin-bottom: 4px; }
+  .step-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+  .step-body { flex: 1; }
+  .step-title { font-size: 0.95rem; font-weight: 600; color: #f1f5f9; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .step-desc { font-size: 0.82rem; color: #94a3b8; margin-top: 4px; line-height: 1.5; }
+  .step-count { font-size: 0.78rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+  .zero  { background: #1e293b; color: #64748b; }
+  .one   { background: #14532d; color: #4ade80; }
+  .n     { background: #1e3a5f; color: #60a5fa; }
+  .arrow { text-align: center; color: #334155; font-size: 1.2rem; line-height: 1; margin: -2px 0; }
+
+  /* tier table */
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th { text-align: left; color: #64748b; font-weight: 600; padding: 6px 10px; border-bottom: 1px solid #2d3748; font-size: 0.74rem; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1a2233; color: #cbd5e1; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .mono { font-family: "Cascadia Code", "Fira Code", "Consolas", monospace; font-size: 0.78rem; color: #93c5fd; }
+  .dim { color: #475569; }
+
+  /* model map */
+  .model-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1a2233; }
+  .model-row:last-child { border-bottom: none; }
+  .model-label { width: 90px; font-size: 0.78rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+  .model-chain { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .chip { padding: 3px 10px; border-radius: 6px; font-size: 0.76rem; font-weight: 500; }
+  .chip-p { background: #1e3a5f; color: #93c5fd; }
+  .chip-f { background: #3b1a0a; color: #fb923c; }
+  .chip-l { background: #1a1a2e; color: #a78bfa; }
+  .chip-c { background: #1a2e1a; color: #6ee7b7; }
+  .arrow-small { color: #334155; font-size: 0.9rem; }
+
+  /* formula */
+  .formula { background: #0f172a; border-radius: 8px; padding: 12px 16px; font-family: "Cascadia Code", monospace; font-size: 0.83rem; color: #a5f3fc; margin-top: 10px; }
+  .formula em { color: #94a3b8; font-style: normal; }
+
+  .full-width { grid-column: 1 / -1; }
+  .section-header { font-size: 1rem; font-weight: 700; color: #f8fafc; margin: 28px 0 12px; max-width: 1100px; }
+</style>
+
+<div style="max-width:1100px;margin:0 auto">
+  <h1>EPUB Autofix — LLM Call Analysis</h1>
+  <p class="subtitle">How many calls are made per job, which models handle them, and how the 3-tier fallback works</p>
+</div>
+
+<!-- Pipeline flow -->
+<div style="max-width:1100px;margin:0 auto 28px">
+  <p class="section-header">Pipeline Steps &amp; LLM calls per step</p>
+  <div class="pipeline">
+
+    <div class="step">
+      <div class="step-num" style="background:#1e293b;color:#64748b">0</div>
+      <div class="step-body">
+        <div class="step-title">
+          EPUB Content Indexing (background)
+          <span class="step-count zero">0 LLM calls</span>
+        </div>
+        <div class="step-desc">Fires <span class="mono">EPUBContentIndexer</span> as a non-blocking background task. Embeds up to 10 CSS + 20 HTML files into <span class="mono">epub_{run_id}</span> ChromaDB collection using BGE-M3. Pure embedding — no LLM involved.</div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="step">
+      <div class="step-num" style="background:#1e293b;color:#64748b">1</div>
+      <div class="step-body">
+        <div class="step-title">
+          Triage
+          <span class="step-count zero">0 LLM calls</span>
+          <span class="badge badge-gray">Deterministic</span>
+        </div>
+        <div class="step-desc">Pure Python rule-based routing — no LLM. Each issue ID is looked up in <span class="mono">AUTO_FIX_RULES</span>, <span class="mono">LLM_FIX_RULES</span>, or <span class="mono">MANUAL_REVIEW_RULES</span> sets. Issues are tagged with routing (<em>auto / llm / hitl</em>) and task_type (<em>codegen / structured / reasoning / vision</em>) in milliseconds. <span class="mono">use_llm_triage</span> is always <span class="mono">False</span> in the autofix pipeline.</div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="step">
+      <div class="step-num" style="background:#1e3a5f;color:#60a5fa">2</div>
+      <div class="step-body">
+        <div class="step-title">
+          Node.js AUTO Fixes
+          <span class="step-count zero">0 LLM calls</span>
+          <span class="badge badge-blue">Deterministic</span>
+        </div>
+        <div class="step-desc">Node.js <span class="mono">/autofix</span> endpoint handles structural/metadata rules (mimetype, NCX, OPF fields, etc.) with hard-coded transformations. Returns a patched EPUB binary. No LLM involved.</div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="step">
+      <div class="step-num" style="background:#14532d;color:#4ade80">3</div>
+      <div class="step-body">
+        <div class="step-title">
+          KB Lookup (per LLM-routed issue)
+          <span class="step-count zero">0 LLM calls</span>
+          <span class="badge badge-green">BGE-M3 Embedding</span>
+        </div>
+        <div class="step-desc">For each unique rule routed to LLM, <span class="mono">_get_kb_context()</span> embeds the issue query with BGE-M3 (768-dim), runs hybrid search (65% dense cosine + 35% BM25), and returns the top KB passages as <span class="mono">context_text</span>. This is embedding inference, not an LLM generation call.</div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="step">
+      <div class="step-num" style="background:#1e3a5f;color:#60a5fa">4</div>
+      <div class="step-body">
+        <div class="step-title">
+          Domain Agent Fixes — <strong>the only LLM calls</strong>
+          <span class="step-count n">1 call per unique LLM-routed rule</span>
+        </div>
+        <div class="step-desc">
+          Four agents run <strong>concurrently</strong> via <span class="mono">asyncio.gather</span>. Each agent calls <span class="mono">ollama_generate()</span> once per unique issue rule it handles.
+          Issues with the same rule ID (e.g., 5 files all missing <span class="mono">L_CSS_CLASS_SELECTOR_MISSING</span>) share <strong>one LLM call</strong> — the patch is applied to all instances.<br><br>
+          Cache hit (<span class="mono">memory.get_cached_prompt</span>) → skips the LLM call entirely, <span class="mono">model_used = "cache"</span>.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="step">
+      <div class="step-num" style="background:#431407;color:#fb923c">5</div>
+      <div class="step-body">
+        <div class="step-title">
+          HITL Suggestions (parallel with Step 4)
+          <span class="step-count n">1 call per unique HITL rule</span>
+        </div>
+        <div class="step-desc">HITL issues go through the same domain agents (same <span class="mono">asyncio.gather</span> call as Step 4) to generate advisory suggestions. Same model, same concurrency. These fixes are never applied automatically — output is shown to human reviewers.</div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <div class="step">
+      <div class="step-num" style="background:#1e293b;color:#64748b">6</div>
+      <div class="step-body">
+        <div class="step-title">
+          EPUBPatcher + Trace Build
+          <span class="step-count zero">0 LLM calls</span>
+        </div>
+        <div class="step-desc">Writes LLM-generated patches into the EPUB file using deterministic XML/CSS manipulation. Builds the <span class="mono">fix_trace</span> list. The <span class="mono">ValidatorAgent</span> exists in code but is <strong>not called</strong> from the autofix pipeline — it's an available endpoint only.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Two-column detail cards -->
+<div class="grid" style="max-width:1100px;margin:0 auto">
+
+  <!-- Call count formula -->
+  <div class="card">
+    <h2>LLM Call Count Formula</h2>
+    <h3>Total calls = unique LLM-routed rules</h3>
+    <div class="step-desc" style="margin-top:6px">Issues with the same rule ID share one LLM call regardless of how many files are affected.</div>
+    <div class="formula">
+      calls = <em>|</em>{issues where routing == "llm"}<em>|</em><br>
+              deduplicated by rule_id
+    </div>
+    <div style="margin-top:14px">
+      <table>
+        <tr><th>Scenario</th><th>Issues</th><th>LLM Calls</th></tr>
+        <tr><td>Typical small EPUB</td><td>10–20 detected</td><td class="mono" style="color:#4ade80">3–8</td></tr>
+        <tr><td>Medium EPUB (this eval)</td><td>~21 detected</td><td class="mono" style="color:#4ade80">8–12</td></tr>
+        <tr><td>All same rule</td><td>50 issues</td><td class="mono" style="color:#4ade80">1</td></tr>
+        <tr><td>Cache warm</td><td>any</td><td class="mono" style="color:#4ade80">0</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3-tier fallback -->
+  <div class="card">
+    <h2>3-Tier LLM Fallback</h2>
+    <h3 style="margin-bottom:14px">Per call attempt order</h3>
+    <table>
+      <tr><th>Tier</th><th>Endpoint</th><th>Timeout</th><th>Concurrency</th></tr>
+      <tr>
+        <td><span class="badge badge-blue">1 Primary</span></td>
+        <td class="mono">172.16.116.216:11434<br><span class="dim">(remote Ollama)</span></td>
+        <td>30s</td>
+        <td>Semaphore(6)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-orange">2 Cloud</span></td>
+        <td class="mono">api.fireworks.ai<br><span class="dim">deepseek-v4-pro</span></td>
+        <td>20s</td>
+        <td>Semaphore(2)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-purple">3 Local</span></td>
+        <td class="mono">127.0.0.1:11434<br><span class="dim">(local Ollama)</span></td>
+        <td>30s</td>
+        <td>Semaphore(1)</td>
+      </tr>
+    </table>
+    <div class="step-desc" style="margin-top:10px">Circuit breaker: after one primary failure the breaker opens for <strong>120s</strong>, routing all calls directly to Fireworks without attempting the remote Ollama.</div>
+  </div>
+
+  <!-- Model map -->
+  <div class="card full-width">
+    <h2>Model Selection Per Agent &amp; Task Type</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px">
+
+      <div>
+        <div style="font-size:0.8rem;color:#64748b;font-weight:600;margin-bottom:10px">AGENT → TASK TYPE</div>
+        <table>
+          <tr><th>Agent</th><th>Rules handled</th><th>task_type</th></tr>
+          <tr>
+            <td>CSSFixerAgent</td>
+            <td class="mono" style="font-size:0.72rem">L_CSS_*, L_FONT_*, L_TABLE_*, L_HEADING_*, L_INLINE_*...</td>
+            <td><span class="badge badge-green">codegen</span></td>
+          </tr>
+          <tr>
+            <td>JSFixerAgent</td>
+            <td class="mono" style="font-size:0.72rem">JS_SCRIPT_*, JS_INLINE_*, JS_MODULE_*...</td>
+            <td><span class="badge badge-green">codegen</span></td>
+          </tr>
+          <tr>
+            <td>HTMLAccessibilityAgent</td>
+            <td class="mono" style="font-size:0.72rem">A_HTML_*, A_LINK_*, A_SCHEMA_*, Media_*</td>
+            <td><span class="badge badge-blue">structured</span></td>
+          </tr>
+          <tr>
+            <td>MetadataTextAgent</td>
+            <td class="mono" style="font-size:0.72rem">M_DATE, M_IDENTIFIER_FORMAT, T_HYPHENATION_*, T_MISSING_*</td>
+            <td><span class="badge badge-blue">structured</span></td>
+          </tr>
+          <tr>
+            <td>Any agent — image alt</td>
+            <td class="mono" style="font-size:0.72rem">Media_IMAGE_NO_ALT, A_IMAGE_ALT_MISSING, IMG_ALT_MISSING</td>
+            <td><span class="badge badge-purple">vision</span></td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
+        <div style="font-size:0.8rem;color:#64748b;font-weight:600;margin-bottom:10px">TASK TYPE → MODEL PER TIER</div>
+        <div class="model-row">
+          <span class="model-label">codegen</span>
+          <div class="model-chain">
+            <span class="chip chip-p">qwen3-coder:30b</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-f">deepseek-v4-pro</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-l">qwen3-coder:30b (local)</span>
+          </div>
+        </div>
+        <div class="model-row">
+          <span class="model-label">structured</span>
+          <div class="model-chain">
+            <span class="chip chip-p">qwen2.5:7b</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-f">deepseek-v4-pro</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-l">qwen2.5:7b (local)</span>
+          </div>
+        </div>
+        <div class="model-row">
+          <span class="model-label">reasoning</span>
+          <div class="model-chain">
+            <span class="chip chip-p">qwen3:14b</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-f">deepseek-v4-pro</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-l">qwen3:14b (local)</span>
+          </div>
+        </div>
+        <div class="model-row">
+          <span class="model-label">vision</span>
+          <div class="model-chain">
+            <span class="chip chip-p">qwen2.5vl:7b</span>
+            <span class="arrow-small">→</span>
+            <span class="chip" style="background:#450a0a;color:#fca5a5">no Fireworks model</span>
+            <span class="arrow-small">→</span>
+            <span class="chip chip-l">qwen2.5vl:7b (local)</span>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:0.78rem;color:#475569">
+          Adaptive fallback: if preferred model isn't installed on Ollama, the client inspects <span class="mono">/api/tags</span> and picks the best available alternative from the fallback list (qwen2.5-coder:14b → qwen2.5-coder:7b → llama3.1:8b...).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- concurrency note -->
+  <div class="card">
+    <h2>Concurrency Model</h2>
+    <div class="step-desc" style="margin-bottom:12px">All domain agent tasks fire in one <span class="mono">asyncio.gather()</span> — they're truly concurrent, not serial. Semaphores prevent thundering herd at the model server.</div>
+    <table>
+      <tr><th>Gate</th><th>Limit</th><th>Purpose</th></tr>
+      <tr><td>Primary Ollama</td><td>6 concurrent</td><td>GPU memory on remote server</td></tr>
+      <tr><td>Fireworks API</td><td>2 concurrent</td><td>Avoid per-minute 429 rate limits</td></tr>
+      <tr><td>Local Ollama</td><td>1 concurrent</td><td>Single-GPU local machine</td></tr>
+    </table>
+  </div>
+
+  <!-- cache -->
+  <div class="card">
+    <h2>When LLM Calls Are Skipped</h2>
+    <table>
+      <tr><th>Condition</th><th>model_used</th></tr>
+      <tr>
+        <td>Identical prompt seen before (Redis prompt cache, 30-min TTL)</td>
+        <td class="mono" style="color:#4ade80">cache</td>
+      </tr>
+      <tr>
+        <td>Issue routed to AUTO (deterministic Node.js)</td>
+        <td class="mono" style="color:#64748b">deterministic</td>
+      </tr>
+      <tr>
+        <td>Issue routed to HITL (no fix attempted)</td>
+        <td class="mono" style="color:#64748b">—</td>
+      </tr>
+      <tr>
+        <td>Multiple instances of same rule ID</td>
+        <td class="mono" style="color:#94a3b8">shared — 1 call for all</td>
+      </tr>
+    </table>
+  </div>
+
+</div>

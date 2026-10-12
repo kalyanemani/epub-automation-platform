@@ -1,0 +1,320 @@
+<title>RAG Pipeline Architecture</title>
+<style>
+  :root {
+    --bg:#0f1117; --s1:#1a1d27; --s2:#222635; --s3:#2a2f45;
+    --border:#2d3148; --accent:#6c8aff; --accent2:#a78bfa;
+    --green:#22c55e; --yellow:#fbbf24; --orange:#fb923c;
+    --blue:#38bdf8; --pink:#f472b6; --teal:#2dd4bf;
+    --red:#f87171; --muted:#64748b; --text:#e2e8f0; --text2:#94a3b8;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size:14px; line-height:1.6; }
+  .page { max-width:1100px; margin:0 auto; padding:32px 20px; }
+  h1 { font-size:1.7rem; font-weight:700; margin-bottom:6px; }
+  h2 { font-size:1.05rem; font-weight:600; color:var(--accent); margin:28px 0 12px; border-bottom:1px solid var(--border); padding-bottom:6px; }
+  h3 { font-size:0.9rem; font-weight:600; margin-bottom:8px; }
+  p  { color:var(--text2); margin-bottom:8px; font-size:0.85rem; }
+  .subtitle { color:var(--text2); font-size:0.85rem; margin-bottom:24px; }
+  code { background:#1e293b; border-radius:3px; padding:1px 6px; font-family:monospace; font-size:0.82em; color:#93c5fd; }
+
+  /* pipeline flow */
+  .flow { display:flex; flex-direction:column; gap:4px; margin-bottom:28px; }
+  .flow-row { display:flex; align-items:stretch; gap:0; }
+  .flow-box {
+    background:var(--s1); border:1px solid var(--border); border-radius:8px;
+    padding:12px 16px; flex:1; min-width:0;
+  }
+  .flow-arrow {
+    display:flex; align-items:center; justify-content:center;
+    width:36px; flex-shrink:0; color:var(--muted); font-size:1.1rem;
+  }
+  .flow-label { font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text2); margin-bottom:4px; }
+  .flow-title { font-weight:600; font-size:0.9rem; margin-bottom:4px; }
+  .flow-detail { font-size:0.78rem; color:var(--text2); }
+
+  /* strategy cards */
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-bottom:16px; }
+  .card { background:var(--s1); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
+  .card-tag { display:inline-block; border-radius:4px; padding:2px 8px; font-size:0.7rem; font-weight:600; margin-bottom:6px; }
+  .card h3 { font-size:0.85rem; margin-bottom:4px; }
+  .card p { font-size:0.78rem; }
+
+  /* color tags */
+  .t-css   { background:#134e4a; color:#6ee7b7; }
+  .t-html  { background:#1e3a5f; color:#93c5fd; }
+  .t-js    { background:#451a03; color:#fcd34d; }
+  .t-prose { background:#3b1f00; color:#fed7aa; }
+
+  /* highlight boxes */
+  .hl { border-left:3px solid; border-radius:0 6px 6px 0; padding:10px 14px; margin-bottom:10px; font-size:0.82rem; }
+  .hl-blue  { border-color:var(--blue);  background:#0c1a2e; }
+  .hl-green { border-color:var(--green); background:#0a1f12; }
+  .hl-yellow{ border-color:var(--yellow);background:#1a1200; }
+  .hl-pink  { border-color:var(--pink);  background:#1f0a18; }
+  .hl-teal  { border-color:var(--teal);  background:#0a1a18; }
+
+  /* spec table */
+  .tbl-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  th { background:var(--s2); color:var(--text2); font-weight:600; text-align:left; padding:8px 12px; border-bottom:1px solid var(--border); }
+  td { padding:7px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:var(--s2); }
+
+  /* pipeline diagram */
+  .pipeline { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:16px 0; }
+  .pip-box {
+    background:var(--s2); border:1px solid var(--border); border-radius:6px;
+    padding:8px 14px; font-size:0.8rem; font-weight:600; white-space:nowrap;
+  }
+  .pip-arrow { color:var(--muted); font-size:1rem; padding:0 2px; }
+
+  /* metric row */
+  .metric-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .metric-box { background:var(--s1); border:1px solid var(--border); border-radius:8px; padding:12px 16px; min-width:140px; }
+  .metric-label { font-size:0.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+  .metric-val   { font-size:1.4rem; font-weight:700; line-height:1.1; }
+  .metric-sub   { font-size:0.72rem; color:var(--muted); margin-top:3px; }
+
+  footer { margin-top:36px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:0.75rem; text-align:center; }
+</style>
+
+<div class="page">
+  <h1>RAG Pipeline Architecture</h1>
+  <p class="subtitle">How chunking, indexing, embedding, and retrieval work in the EPUB autofix system</p>
+
+  <!-- ── Quick-spec numbers ── -->
+  <div class="metric-row">
+    <div class="metric-box"><div class="metric-label">Embedding Model</div><div class="metric-val" style="color:var(--blue);font-size:1rem">BAAI/bge-m3</div><div class="metric-sub">768-dim, multilingual, long-context</div></div>
+    <div class="metric-box"><div class="metric-label">Max Chunk Tokens</div><div class="metric-val" style="color:var(--green)">512</div><div class="metric-sub">sliding-window / CSS cap 800 chars</div></div>
+    <div class="metric-box"><div class="metric-label">Retrieval Fusion</div><div class="metric-val" style="color:var(--accent);font-size:1rem">65/35</div><div class="metric-sub">dense BGE-M3 + BM25 Okapi</div></div>
+    <div class="metric-box"><div class="metric-label">Score Threshold</div><div class="metric-val" style="color:var(--yellow)">0.35</div><div class="metric-sub">min combined score to return</div></div>
+    <div class="metric-box"><div class="metric-label">KB Collections</div><div class="metric-val" style="color:var(--teal)">3 + 1</div><div class="metric-sub">kb_css, kb_js, epub_rules + epub_{run_id}</div></div>
+    <div class="metric-box"><div class="metric-label">BM25 TTL</div><div class="metric-val" style="color:var(--orange)">30 min</div><div class="metric-sub">in-memory, per static collection</div></div>
+  </div>
+
+  <!-- ── End-to-end flow ── -->
+  <h2>End-to-End Flow</h2>
+  <div class="pipeline">
+    <div class="pip-box" style="border-color:var(--blue);color:var(--blue)">EPUB Upload</div>
+    <span class="pip-arrow">→</span>
+    <div class="pip-box" style="border-color:var(--teal);color:var(--teal)">Extract CSS / HTML / OPF</div>
+    <span class="pip-arrow">→</span>
+    <div class="pip-box" style="border-color:var(--green);color:var(--green)">SmartChunker</div>
+    <span class="pip-arrow">→</span>
+    <div class="pip-box" style="border-color:var(--accent);color:var(--accent)">BGE-M3 Embed</div>
+    <span class="pip-arrow">→</span>
+    <div class="pip-box" style="border-color:var(--pink);color:var(--pink)">ChromaDB Upsert</div>
+    <span class="pip-arrow">→</span>
+    <div class="pip-box" style="border-color:var(--yellow);color:var(--yellow)">Hybrid Search</div>
+    <span class="pip-arrow">→</span>
+    <div class="pip-box" style="border-color:var(--orange);color:var(--orange)">LLM Fix Agent</div>
+  </div>
+
+  <!-- ── Step 1: Embedding Model ── -->
+  <h2>Step 1 — Embedding Model: BAAI/bge-m3</h2>
+  <div class="hl hl-blue">
+    <strong style="color:var(--blue)">Model:</strong> <code>BAAI/bge-m3</code> via SentenceTransformers ·
+    Singleton loaded once at startup (<code>rag_engine.py:90</code>) — shared across all 5 import sites<br>
+    <strong style="color:var(--blue)">Instruction prefix:</strong> <code>"Represent this EPUB issue for retrieval: {text}"</code> prepended to every chunk at index time<br>
+    <strong style="color:var(--blue)">Normalization:</strong> <code>normalize_embeddings=True</code> — cosine similarity = dot product (faster in ChromaDB HNSW)<br>
+    <strong style="color:var(--blue)">Thread-safe:</strong> Double-checked lock prevents concurrent double-loads
+  </div>
+  <div class="cards" style="grid-template-columns:1fr 1fr 1fr;">
+    <div class="card">
+      <h3 style="color:var(--blue)">Why BGE-M3?</h3>
+      <p>State-of-the-art multilingual model. Handles EPUB-specific vocabulary (CSS selectors, XHTML tags, BCP-47 language codes) better than general models. Supports up to 8192 tokens — important for long CSS files.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--blue)">Two uses in the pipeline</h3>
+      <p><strong>1. Index time:</strong> embed chunks before writing to ChromaDB<br>
+      <strong>2. Query time:</strong> embed the EPUB issue description before searching<br>
+      Same model, same instruction prefix — ensures query/document vector space alignment</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--blue)">Also used for text diffing</h3>
+      <p><code>compute_similarity(text1, text2)</code> computes cosine similarity between two text passages. Thresholds: &gt;0.98 = identical, &gt;0.95 + low fuzzy = formatting mismatch, &lt;0.85 = high-risk divergence</p>
+    </div>
+  </div>
+
+  <!-- ── Step 2: Chunking ── -->
+  <h2>Step 2 — SmartChunker: 4 Strategies</h2>
+  <p>File type drives strategy selection automatically via <code>auto_chunk(content, content_type)</code></p>
+  <div class="cards">
+    <div class="card">
+      <span class="card-tag t-css">CSS → css_rule</span>
+      <h3>Rule-block chunking</h3>
+      <p>Parses CSS by brace depth. Each chunk = one complete <code>selector { declarations }</code> block. Stores <code>selector</code>, <code>line_start</code>, <code>line_end</code> in metadata.<br><br>
+      Cap: 800 chars per chunk. Falls back to sliding_window if no blocks found.<br>
+      <em>Used by: EPUBContentIndexer + KB CSS indexing</em></p>
+    </div>
+    <div class="card">
+      <span class="card-tag t-html">HTML/XHTML → hierarchical</span>
+      <h3>Heading-anchored chunking</h3>
+      <p>Parses HTML with BeautifulSoup. Splits at <code>h1</code> / <code>h2</code> boundaries. Each chunk stores its parent <code>h1</code> and <code>h2</code> in metadata — preserves document structure.<br><br>
+      Max 512 tokens per chunk. Tags: <code>h1 h2 h3 p li td th</code><br>
+      Cap: 20 HTML files, 60 KB per file<br>
+      <em>Used by: EPUBContentIndexer HTML indexing</em></p>
+    </div>
+    <div class="card">
+      <span class="card-tag t-js">JS → sliding_window</span>
+      <h3>Sliding window</h3>
+      <p>512-token window, 128-token overlap. Each chunk includes the end of the previous chunk so no context is lost at boundaries.<br><br>
+      Also fallback for any content that doesn't match other strategies.<br>
+      <em>Used by: KB JS indexing, any unknown file type</em></p>
+    </div>
+    <div class="card">
+      <span class="card-tag t-prose">Prose / KB rules → semantic</span>
+      <h3>Sentence-boundary chunking</h3>
+      <p>Splits on <code>[.!?]\s+</code>. Accumulates sentences until ~300 tokens, then flushes.<br><br>
+      Best for KB rule descriptions, OPF metadata summaries, accessibility guidance — natural language that benefits from sentence integrity.<br>
+      <em>Used by: KB entry indexing, OPF metadata</em></p>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Indexing ── -->
+  <h2>Step 3 — ChromaIndexer: Embedding + Upsert</h2>
+  <div class="hl hl-green">
+    <strong style="color:var(--green)">Deduplication:</strong> MD5 of <code>collection:content[:200]</code> used as chunk ID — identical content never re-indexed<br>
+    <strong style="color:var(--green)">Instruction prefix:</strong> prepended to every text before embedding: <code>"Represent this EPUB issue for retrieval: {chunk}"</code><br>
+    <strong style="color:var(--green)">Payload stored per chunk:</strong> content, strategy, source, rule_id, title, domain, file_type, h1, h2 (heading hierarchy)
+  </div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Collection</th><th>Type</th><th>Content</th><th>Chunking</th><th>Lifetime</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>kb_css</code></td><td>Static KB</td>
+        <td>CSS best practices, invalid property reference, selector rules</td>
+        <td>css_rule + semantic</td><td>Persistent — seeded once from <code>kb/css_kb.py</code></td>
+      </tr>
+      <tr>
+        <td><code>kb_js</code></td><td>Static KB</td>
+        <td>EPUB JS restrictions, unsupported APIs, reading-system guidance</td>
+        <td>sliding_window</td><td>Persistent — seeded from <code>kb/js_kb.py</code></td>
+      </tr>
+      <tr>
+        <td><code>epub_rules</code></td><td>Static KB</td>
+        <td>EPUB spec rules, accessibility guidelines, NCX/OPF schema</td>
+        <td>semantic</td><td>Persistent — seeded from <code>kb/epub_rules_kb.py</code></td>
+      </tr>
+      <tr>
+        <td><code>epub_{run_id}</code></td><td>Per-run</td>
+        <td>This EPUB's CSS rules, HTML structure, OPF metadata (cap: 10 CSS + 20 HTML files)</td>
+        <td>css_rule / hierarchical / semantic</td><td>Ephemeral — created at autofix start, not cleaned up explicitly</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <!-- ── Step 4: Retrieval ── -->
+  <h2>Step 4 — Hybrid Search: Dense + BM25 Fusion</h2>
+  <div class="hl hl-yellow">
+    <strong style="color:var(--yellow)">Formula:</strong> <code>score = 0.65 × dense_cosine + 0.35 × BM25_normalized</code><br>
+    <strong style="color:var(--yellow)">Dense candidates:</strong> <code>limit × 2</code> fetched from ChromaDB HNSW for re-ranking headroom<br>
+    <strong style="color:var(--yellow)">BM25 tokenizer:</strong> lowercases, splits on non-alphanumeric, <em>preserves hyphens</em> (critical for CSS property names like <code>font-weight</code>)<br>
+    <strong style="color:var(--yellow)">BM25 scope:</strong> only static collections (<code>kb_css</code>, <code>kb_js</code>, <code>epub_rules</code>, <code>issue_patterns</code>) — per-run <code>epub_*</code> collections use dense-only (small + ephemeral)
+  </div>
+
+  <div class="cards" style="grid-template-columns:1fr 1fr;">
+    <div class="card">
+      <h3 style="color:var(--yellow)">Why 65/35 split?</h3>
+      <p>Dense search (BGE-M3) captures semantic meaning — good for "CSS property invalid" matching "unsupported CSS declaration". BM25 adds exact-keyword recall — good for matching specific property names like <code>font-weight</code> or <code>extrabold</code>. 65/35 favours semantics while ensuring keyword-heavy EPUB rules still score well.</p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--yellow)">BM25 index lifecycle</h3>
+      <p>Built lazily on first query per collection. Cached in module-level <code>_bm25_cache</code> dict for 30 min (<code>BM25_TTL</code>). Rebuilds automatically on next query after TTL expires. Per-run <code>epub_*</code> collections are skipped — not worth BM25 indexing since they're small and short-lived.</p>
+    </div>
+  </div>
+
+  <!-- ── Step 5: CAG Cache ── -->
+  <h2>Step 5 — CAG Cache: Cache-Augmented Generation</h2>
+  <div class="hl hl-pink">
+    <strong style="color:var(--pink)">What it does:</strong> Pre-loads top-100 KB chunks from Redis into Python process memory (dict). Reduces retrieval latency for the most-used KB entries to zero (no ChromaDB round-trip).<br>
+    <strong style="color:var(--pink)">Query cache:</strong> <code>cag_query:{hash(query)}</code> stored in Redis with 30-min TTL — repeated queries for the same issue type skip all embedding + search<br>
+    <strong style="color:var(--pink)">Refresh:</strong> Background asyncio task refreshes every 30 min
+  </div>
+
+  <!-- ── Step 6: Per-EPUB Indexing ── -->
+  <h2>Step 6 — Per-EPUB Content Indexing at Autofix Start</h2>
+  <div class="hl hl-teal">
+    <strong style="color:var(--teal)">When:</strong> Fired as a non-blocking background task the moment autofix begins (does not delay the fix pipeline)<br>
+    <strong style="color:var(--teal)">What gets indexed:</strong> Up to 10 CSS files (css_rule strategy) + 20 HTML files (hierarchical, capped at 60 KB each) + OPF metadata (semantic, first 2000 chars of OPF + extracted key fields)<br>
+    <strong style="color:var(--teal)">Why:</strong> Gives KBAgent grounding in <em>this specific EPUB's</em> CSS patterns and HTML structure, not just generic EPUB rules
+  </div>
+
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-box" style="border-color:var(--teal)">
+        <div class="flow-label">EPUB autofix begins</div>
+        <div class="flow-title">EPUBContentIndexer.index_epub()</div>
+        <div class="flow-detail">Extract to temp dir → index CSS + HTML + OPF in parallel → delete temp dir</div>
+      </div>
+    </div>
+    <div class="flow-row" style="justify-content:center"><span style="color:var(--muted)">↓ (runs in background, non-blocking)</span></div>
+    <div class="flow-row" style="gap:12px">
+      <div class="flow-box" style="border-color:var(--blue)">
+        <div class="flow-label">CSS files (≤10)</div>
+        <div class="flow-title">chunk_css_rules()</div>
+        <div class="flow-detail">selector + declarations per chunk<br>line_start / line_end metadata stored</div>
+      </div>
+      <div class="flow-box" style="border-color:var(--accent)">
+        <div class="flow-label">HTML/XHTML files (≤20)</div>
+        <div class="flow-title">chunk_hierarchical()</div>
+        <div class="flow-detail">h1→h2 boundaries<br>max 60 KB per file</div>
+      </div>
+      <div class="flow-box" style="border-color:var(--green)">
+        <div class="flow-label">OPF metadata</div>
+        <div class="flow-title">single semantic chunk</div>
+        <div class="flow-detail">dc:title, creator, language, date + first 2000 chars of OPF</div>
+      </div>
+    </div>
+    <div class="flow-row" style="justify-content:center"><span style="color:var(--muted)">↓</span></div>
+    <div class="flow-row">
+      <div class="flow-box" style="border-color:var(--pink)">
+        <div class="flow-label">All chunks</div>
+        <div class="flow-title">ChromaDB collection: epub_{run_id}</div>
+        <div class="flow-detail">BGE-M3 embed → upsert with dedup. Queried by KBAgent alongside global kb_css / kb_js</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Known gaps ── -->
+  <h2>Known Gaps &amp; Improvement Opportunities</h2>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Gap</th><th>Impact</th><th>Suggested Fix</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>KB context not stored in fix_trace</strong></td>
+        <td>RAGAS Context Precision = N/A; LLM judge can't measure faithfulness meaningfully</td>
+        <td>Add <code>kb_context</code> field to each fix_trace entry in <code>_run_autofix_job</code></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>epub_{run_id} collections never cleaned up</strong></td>
+        <td>ChromaDB grows unboundedly with one collection per autofix run</td>
+        <td>Delete collection in <code>finally</code> block of <code>_run_autofix_job</code>, or run a TTL cleanup job</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Token count uses word count (<code>len(text.split())</code>), not real tokens</strong></td>
+        <td>Chunks may exceed model context window on dense text (e.g. minified CSS)</td>
+        <td>Use a real tokenizer (<code>tiktoken</code> or SentenceTransformer's tokenizer) for accurate chunk sizing</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>BM25 skips per-run <code>epub_*</code> collections</strong></td>
+        <td>Keyword recall is lower when searching the per-EPUB context (CSS selector names, class names)</td>
+        <td>Build a lightweight in-memory BM25 index for the <code>epub_{run_id}</code> collection at index time (it's small — typically &lt;200 chunks)</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Instruction prefix used at index time but not explicitly at query time</strong></td>
+        <td>Minor vector space misalignment; BGE-M3 is robust enough to compensate but not optimal</td>
+        <td>Also prepend the same instruction prefix to the query embedding in <code>hybrid_search</code> and <code>cag.py</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <footer>EPUB Automation Pipeline · RAG Architecture · BAAI/bge-m3 + ChromaDB HNSW + BM25Okapi + CAGCache</footer>
+</div>

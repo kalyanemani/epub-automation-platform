@@ -1,0 +1,463 @@
+<title>EPUB Autofix — Complete Workflow</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b0f1a;color:#e2e8f0;min-height:100vh;padding:28px 16px}
+h1{font-size:1.45rem;font-weight:700;color:#f8fafc;text-align:center}
+.tagline{color:#64748b;font-size:0.82rem;text-align:center;margin:4px 0 32px}
+/* lane layout */
+.lanes{display:grid;grid-template-columns:120px 1fr 1fr 1fr;gap:0;max-width:1120px;margin:0 auto}
+.lane-header{padding:10px 8px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:8px 8px 0 0;text-align:center}
+.lh-ui   {background:#1a2035;color:#60a5fa}
+.lh-node {background:#1a2810;color:#4ade80}
+.lh-py   {background:#2a1a35;color:#c084fc}
+.lh-llm  {background:#2a1810;color:#fb923c}
+.lane-body{border-top:2px solid;padding:10px 8px}
+.lb-ui   {border-color:#60a5fa22;background:#0f1627}
+.lb-node {border-color:#4ade8022;background:#0e1a0e}
+.lb-py   {border-color:#c084fc22;background:#160f22}
+.lb-llm  {border-color:#fb923c22;background:#1e1208}
+/* blocks */
+.block{border-radius:8px;padding:10px 12px;margin:6px 0;font-size:0.78rem;line-height:1.5;position:relative}
+.block-title{font-weight:700;font-size:0.8rem;margin-bottom:3px}
+.b-ui  {background:#1e2a4a;border:1px solid #3b4f7a;color:#bfdbfe}
+.b-node{background:#162613;border:1px solid #2d5a1b;color:#bbf7d0}
+.b-py  {background:#1f1030;border:1px solid #5b2d8a;color:#e9d5ff}
+.b-llm {background:#2a1a08;border:1px solid #7c3a0a;color:#fed7aa}
+.b-rag {background:#0f2a2a;border:1px solid #0d6060;color:#99f6e4}
+.b-data{background:#1a1a2a;border:1px solid #3a3a6a;color:#c4b5fd}
+/* phase rows */
+.row{display:contents}
+.phase-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#334155;padding:14px 4px 2px;writing-mode:horizontal-tb;display:flex;align-items:center;justify-content:center}
+.phase-divider{grid-column:1/-1;border:none;border-top:1px solid #1e2a3a;margin:8px 0}
+/* badges */
+.badge{display:inline-block;padding:1px 7px;border-radius:999px;font-size:0.65rem;font-weight:700;margin-left:4px;vertical-align:middle}
+.bg{background:#14532d;color:#4ade80}
+.bb{background:#1e3a5f;color:#93c5fd}
+.bo{background:#431407;color:#fb923c}
+.bp{background:#2e1065;color:#c084fc}
+.br{background:#450a0a;color:#f87171}
+.bw{background:#1e293b;color:#94a3b8}
+/* arrow col */
+.arrow-col{display:flex;align-items:center;justify-content:center;color:#334155;font-size:1.4rem;padding:0 4px}
+/* connector */
+.connector{grid-column:1/-1;display:flex;align-items:center;gap:0;margin:4px 0}
+.conn-line{flex:1;height:1px;background:linear-gradient(to right,transparent,#334155,transparent)}
+.conn-label{font-size:0.66rem;color:#475569;white-space:nowrap;padding:0 8px}
+/* sub-item */
+.sub{font-size:0.72rem;color:#94a3b8;margin-top:2px}
+.sub li{margin-left:14px;margin-top:1px}
+/* step number */
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:0.65rem;font-weight:800;margin-right:5px;flex-shrink:0}
+.sn-blue{background:#1e3a5f;color:#93c5fd}
+.sn-green{background:#14532d;color:#4ade80}
+.sn-purple{background:#2e1065;color:#c084fc}
+.sn-orange{background:#431407;color:#fb923c}
+.sn-teal{background:#0d3a3a;color:#2dd4bf}
+.sn-gray{background:#1e293b;color:#64748b}
+/* parallel block */
+.parallel{border:1px dashed #334155;border-radius:8px;padding:6px;margin:4px 0}
+.parallel-label{font-size:0.65rem;color:#475569;font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+/* wide sections */
+.wide-section{max-width:1120px;margin:0 auto 0;padding:0}
+/* summary table */
+table{width:100%;border-collapse:collapse;font-size:0.78rem;margin-top:8px}
+th{text-align:left;color:#64748b;font-weight:600;padding:5px 8px;border-bottom:1px solid #1e2a3a;font-size:0.7rem;text-transform:uppercase}
+td{padding:6px 8px;border-bottom:1px solid #111827;color:#cbd5e1;vertical-align:top}
+tr:last-child td{border-bottom:none}
+.mono{font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:0.74rem;color:#93c5fd}
+/* legend */
+.legend{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:20px auto 8px;max-width:1120px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:0.72rem;color:#64748b}
+.leg-dot{width:10px;height:10px;border-radius:3px}
+</style>
+
+<h1>EPUB Autofix — Complete End-to-End Workflow</h1>
+<p class="tagline">Three services · Two fix engines · One RAG pipeline</p>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#3b4f7a"></div>Streamlit UI (8501)</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#2d5a1b"></div>Node.js Service (9000)</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#5b2d8a"></div>Python RAG Service (8001)</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#7c3a0a"></div>LLM / Embedding</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#0d6060"></div>RAG / ChromaDB</div>
+</div>
+
+<div class="lanes">
+  <!-- Headers -->
+  <div class="lane-header lh-ui">Streamlit UI<br/><span style="font-size:0.6rem;opacity:.7">port 8501</span></div>
+  <div class="lane-header lh-node">Node.js Service<br/><span style="font-size:0.6rem;opacity:.7">port 9000</span></div>
+  <div class="lane-header lh-py">Python RAG Service<br/><span style="font-size:0.6rem;opacity:.7">port 8001</span></div>
+  <div class="lane-header lh-llm">LLM / Embedding Layer</div>
+
+  <!-- ── PHASE 1: UPLOAD ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+  <div class="phase-label" style="grid-column:1;font-size:0.65rem;color:#1e3a5f;font-weight:800;padding:4px 2px;text-align:center">① UPLOAD</div>
+
+  <div class="lane-body lb-ui" style="grid-column:1;grid-row:span 1">
+    <div class="block b-ui">
+      <div class="block-title"><span class="step-num sn-blue">1</span>User selects EPUB</div>
+      <div class="sub">Streamlit file uploader<br/>sends multipart POST to<br/><span class="mono">/validate-async</span></div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-node" style="grid-column:2">
+    <div class="block b-node">
+      <div class="block-title"><span class="step-num sn-green">2</span>Receive &amp; unzip EPUB</div>
+      <div class="sub">Extracts to temp dir<br/>Parses OPF, NCX, manifest<br/>Returns <span class="mono">jobId</span> immediately</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-py" style="grid-column:3"></div>
+  <div class="lane-body lb-llm" style="grid-column:4"></div>
+
+  <!-- ── PHASE 2: VALIDATION ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1">
+    <div class="block b-ui">
+      <div class="block-title"><span class="step-num sn-blue">3</span>Poll validation status</div>
+      <div class="sub">GET <span class="mono">/validate-status/{jobId}</span><br/>Shows spinner until done</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-node" style="grid-column:2">
+    <div class="block b-node">
+      <div class="block-title"><span class="step-num sn-green">4</span>Run 7 check workers in parallel</div>
+      <div class="sub">Each runs in a Node.js Worker thread:
+        <ul>
+          <li>MetadataChecks — OPF fields, language, identifiers</li>
+          <li>StructureChecks — mimetype, manifest, spine, NCX</li>
+          <li>MediaChecks — image src, audio controls, alt text</li>
+          <li>AccessibilityChecks — lang, link text, ARIA, SCHEMA</li>
+          <li>LayoutChecks — CSS, fonts, responsive, heading hierarchy</li>
+          <li>ScriptChecks — JS references, inline scripts, APIs</li>
+          <li>TextContentChecks — hyphenation, special chars (long timeout)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="block b-node" style="margin-top:4px">
+      <div class="block-title"><span class="step-num sn-green">5</span>Merge &amp; annotate results</div>
+      <div class="sub">Dedup, severity scoring, AI enrichment<br/>Returns JSON report with N issues</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-py" style="grid-column:3"></div>
+  <div class="lane-body lb-llm" style="grid-column:4"></div>
+
+  <!-- ── PHASE 3: AUTOFIX TRIGGER ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1">
+    <div class="block b-ui">
+      <div class="block-title"><span class="step-num sn-blue">6</span>User clicks Auto-Fix</div>
+      <div class="sub">POSTs EPUB + validation report<br/>to <span class="mono">/agent-autofix-async</span><br/>Gets back <span class="mono">job_id</span>, starts polling</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-node" style="grid-column:2"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">7</span>Queue background job</div>
+      <div class="sub">Saves EPUB bytes to temp file<br/>Fires <span class="mono">_run_autofix_job()</span> as asyncio background task<br/>Returns <span class="mono">job_id</span> immediately — non-blocking</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4"></div>
+
+  <!-- ── PHASE 4: EPUB INDEXING (background) ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1">
+    <div class="block b-ui" style="opacity:.5">
+      <div class="block-title">Polling…</div>
+      <div class="sub">GET <span class="mono">/agent-autofix-status/{job_id}</span><br/>every few seconds</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-node" style="grid-column:2"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-gray">0</span>EPUB Content Indexing <span class="badge bw">background</span></div>
+      <div class="sub">Runs non-blocking, in parallel with all other steps:
+        <ul>
+          <li>Unzips EPUB to temp dir</li>
+          <li>Reads ≤10 CSS files + ≤20 HTML files (≤60KB each) + OPF</li>
+          <li>SmartChunker: CSS→css_rule, HTML→hierarchical, else→semantic</li>
+          <li>ChromaIndexer deduplicates by MD5 of content[:200]</li>
+          <li>Stores in collection <span class="mono">epub_{run_id}</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4">
+    <div class="block b-rag">
+      <div class="block-title"><span class="step-num sn-teal">E</span>BGE-M3 Embedding</div>
+      <div class="sub">768-dim, multilingual<br/>Instruction prefix prepended:<br/><span class="mono" style="font-size:0.65rem">"Represent this EPUB issue<br/> for retrieval: {chunk}"</span><br/><br/>Stored → ChromaDB HNSW</div>
+    </div>
+  </div>
+
+  <!-- ── PHASE 5: TRIAGE ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1;opacity:.3"></div>
+  <div class="lane-body lb-node" style="grid-column:2"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">8</span>Triage — zero LLM calls</div>
+      <div class="sub">Pure Python rule lookup — instant:
+        <ul>
+          <li><span class="badge bg">AUTO</span> S_*, NCX_*, M_DUPLICATES, T_SPECIAL_CHAR… → Node.js deterministic fixer</li>
+          <li><span class="badge bp">LLM</span> L_*, JS_*, A_*, Media_*, M_DATE… → domain agents</li>
+          <li><span class="badge br">HITL</span> A_MANUAL, SMIL_*, S_BROKEN_INTERNAL_LINKS… → human review</li>
+        </ul>
+        Each issue tagged with task_type: codegen / structured / reasoning / vision
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4">
+    <div class="block b-llm" style="opacity:.3">
+      <div class="block-title">Not used in triage</div>
+      <div class="sub">Routing is deterministic<br/><span class="mono">use_llm_triage: false</span></div>
+    </div>
+  </div>
+
+  <!-- ── PHASE 6: AUTO FIX (Node.js) ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1;opacity:.3"></div>
+
+  <div class="lane-body lb-node" style="grid-column:2">
+    <div class="block b-node">
+      <div class="block-title"><span class="step-num sn-green">9</span>Deterministic AUTO fixes</div>
+      <div class="sub">Node.js <span class="mono">/autofix</span> endpoint — no LLM:
+        <ul>
+          <li>epub-structure-fixer.js → mimetype, manifest, spine</li>
+          <li>fix-ncx.js → NCX playOrder, duplicate IDs, phantom entries</li>
+          <li>epub-opf-fixer.js → OPF metadata fields (publisher, language…)</li>
+          <li>fix-accessibility.js → schema accessibility metadata</li>
+          <li>fix-nav.js → NAV/NCX synchronisation</li>
+        </ul>
+        Returns patched EPUB binary + list of <span class="mono">fixedRules[]</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">10</span>Download patched EPUB</div>
+      <div class="sub">Python fetches the Node.js-fixed EPUB.<br/>This becomes the base file for all LLM patches in the next step.<br/>Python also runs its own deterministic fallback for any AUTO rules Node.js missed.</div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4;opacity:.3">
+    <div class="block b-llm"><div class="block-title">Not used</div></div>
+  </div>
+
+  <!-- ── PHASE 7: KB LOOKUP ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1;opacity:.3"></div>
+  <div class="lane-body lb-node" style="grid-column:2;opacity:.3"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">11</span>KB lookup — per issue, all parallel</div>
+      <div class="sub">For each LLM-routed unique rule (asyncio.gather):
+        <ul>
+          <li>Embed query: BGE-M3 + instruction prefix</li>
+          <li>Hybrid search across collections:<br/><span class="mono" style="font-size:0.65rem">epub_{run_id}, kb_css, kb_js, epub_rules, issue_patterns</span></li>
+          <li>65% dense cosine + 35% BM25 Okapi, threshold 0.35</li>
+          <li>Top 6 chunks → context_text (≤2000 chars)</li>
+          <li>Cache result 30 min in Redis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4">
+    <div class="block b-rag">
+      <div class="block-title"><span class="step-num sn-teal">R</span>Hybrid Retrieval</div>
+      <div class="sub">
+        Dense: ChromaDB HNSW cosine<br/>
+        Sparse: BM25 Okapi in-memory<br/>
+        <br/>
+        <b style="color:#2dd4bf">Score = 0.65×dense + 0.35×BM25</b><br/>
+        <br/>
+        CAGCache pre-loads top-100 KB<br/>chunks from Redis for ultra-fast<br/>common-issue lookups
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PHASE 8: LLM DOMAIN FIXES ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1;opacity:.3"></div>
+  <div class="lane-body lb-node" style="grid-column:2;opacity:.3"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">12</span>Domain agents + HITL — all parallel</div>
+      <div class="sub" style="margin-bottom:6px">One <span class="mono">asyncio.gather()</span> fires all at once:</div>
+
+      <div class="parallel">
+        <div class="parallel-label">concurrent domain agents</div>
+        <div class="block b-py" style="margin:3px 0;padding:7px 10px">
+          <b>CSSFixerAgent</b> <span class="badge bo">codegen</span>
+          <div class="sub">L_CSS_*, L_FONT_*, L_TABLE_*, L_HEADING_*, L_INLINE_*<br/>Validates: balanced braces, property:value pairs</div>
+        </div>
+        <div class="block b-py" style="margin:3px 0;padding:7px 10px">
+          <b>JSFixerAgent</b> <span class="badge bo">codegen</span>
+          <div class="sub">JS_SCRIPT_*, JS_INLINE_*, JS_MODULE_*, JS_UNSUPPORTED_*</div>
+        </div>
+        <div class="block b-py" style="margin:3px 0;padding:7px 10px">
+          <b>HTMLAccessibilityAgent</b> <span class="badge bb">structured</span>
+          <div class="sub">A_HTML_LANG_*, A_LINK_TEXT_*, A_SCHEMA_*, Media_*</div>
+        </div>
+        <div class="block b-py" style="margin:3px 0;padding:7px 10px">
+          <b>MetadataTextAgent</b> <span class="badge bb">structured</span>
+          <div class="sub">M_DATE, M_IDENTIFIER_FORMAT, T_HYPHENATION_*, T_MISSING_*</div>
+        </div>
+        <div class="block b-data" style="margin:3px 0;padding:7px 10px">
+          <b>HITL Suggestions</b> (same agents, parallel)
+          <div class="sub">Advisory output only — never auto-applied</div>
+        </div>
+      </div>
+
+      <div class="sub" style="margin-top:6px">Each agent per issue:
+        <ul>
+          <li>Builds prompt: system_prompt + issue details + targeted fix section + KB context</li>
+          <li>Checks prompt cache (Redis) → skips LLM if cached</li>
+          <li>Calls <span class="mono">ollama_generate()</span> → 3-tier fallback</li>
+          <li>Parses <span class="mono">&lt;fix&gt;</span>, <span class="mono">&lt;confidence&gt;</span>, <span class="mono">&lt;reason&gt;</span></li>
+          <li>Validation: len ≥ 10, no placeholder tokens, no JUNK values</li>
+          <li>Attaches kb_context to fix result</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4">
+    <div class="block b-llm">
+      <div class="block-title"><span class="step-num sn-orange">L</span>3-Tier LLM Fallback</div>
+      <div class="sub">Per call, in order:</div>
+      <br/>
+      <div class="block b-llm" style="padding:7px;margin:3px 0">
+        <b style="color:#93c5fd">① Remote Ollama</b><br/>
+        <span class="mono" style="font-size:0.68rem">172.16.116.216:11434</span><br/>
+        codegen → qwen3-coder:30b<br/>
+        structured → qwen2.5:7b<br/>
+        reasoning → qwen3:14b<br/>
+        vision → qwen2.5vl:7b<br/>
+        Semaphore(6) · 30s timeout<br/>
+        Circuit breaker: 120s cooldown
+      </div>
+      <div class="block b-llm" style="padding:7px;margin:3px 0">
+        <b style="color:#fb923c">② Fireworks AI</b><br/>
+        <span class="mono" style="font-size:0.68rem">api.fireworks.ai</span><br/>
+        All types → deepseek-v4-pro<br/>
+        Semaphore(4) · 20s timeout<br/>
+        Auto-retry on 429 (×3)
+      </div>
+      <div class="block b-llm" style="padding:7px;margin:3px 0">
+        <b style="color:#c084fc">③ Local Ollama</b><br/>
+        <span class="mono" style="font-size:0.68rem">127.0.0.1:11434</span><br/>
+        Same model map as primary<br/>
+        Semaphore(1) · 30s timeout<br/>
+        Last resort — sequential
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PHASE 9: PATCHER ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1;opacity:.3"></div>
+  <div class="lane-body lb-node" style="grid-column:2;opacity:.3"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">13</span>EPUBPatcher — write fixes into file</div>
+      <div class="sub">Unzips EPUB, snapshots all affected files, then dispatches each fixable patch:
+        <ul>
+          <li><span class="mono">_fix_css_inplace()</span> — CSS syntax, invalid declarations</li>
+          <li><span class="mono">_fix_css_append()</span> — missing class selectors, table/list rules</li>
+          <li><span class="mono">_fix_css_font_fallback()</span> — font-family stacks</li>
+          <li><span class="mono">_fix_html_lang()</span> — &lt;html lang="…"&gt;</li>
+          <li><span class="mono">_fix_img_alt()</span> — alt attribute injection</li>
+          <li><span class="mono">_fix_opf_metadata()</span> — OPF dc:* fields</li>
+          <li><span class="mono">_fix_opf_accessibility_meta()</span> — schema:* meta</li>
+          <li>… 8 more dispatchers</li>
+        </ul>
+        Computes before/after diffs per file → <span class="mono">diffs[]</span><br/>
+        Repacks as ZIP → <span class="mono">*_agent_patched.epub</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4;opacity:.3">
+    <div class="block b-llm"><div class="block-title">Not used</div><div class="sub">Pure file manipulation</div></div>
+  </div>
+
+  <!-- ── PHASE 10: FINISH ── -->
+  <div style="grid-column:1/-1"><hr class="phase-divider"/></div>
+
+  <div class="lane-body lb-ui" style="grid-column:1">
+    <div class="block b-ui">
+      <div class="block-title"><span class="step-num sn-blue">15</span>Show results + download</div>
+      <div class="sub">
+        Fix trace table (routing, model, confidence, fix_value, kb_context)<br/>
+        Per-file diffs viewer<br/>
+        HITL suggestions panel<br/>
+        Download fixed EPUB button
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-node" style="grid-column:2;opacity:.3"></div>
+
+  <div class="lane-body lb-py" style="grid-column:3">
+    <div class="block b-py">
+      <div class="block-title"><span class="step-num sn-purple">14</span>Build trace + cleanup</div>
+      <div class="sub">
+        <ul>
+          <li>Build <span class="mono">fix_trace[]</span>: issue_id, routing, engine, model_used, task_type, fix_value, fixable, applied, confidence, fix_reason, kb_context</li>
+          <li>Record fix outcomes in long-term memory (adaptive triage learning)</li>
+          <li>Store result in job store → available at <span class="mono">/agent-autofix-status/{job_id}</span></li>
+          <li>Delete <span class="mono">epub_{run_id}</span> ChromaDB collection (cleanup)</li>
+          <li>Delete all temp dirs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lane-body lb-llm" style="grid-column:4;opacity:.3">
+    <div class="block b-llm"><div class="block-title">Not used</div></div>
+  </div>
+
+</div><!-- /lanes -->
+
+<!-- Summary table -->
+<div style="max-width:1120px;margin:28px auto 0">
+  <div style="background:#1e2330;border:1px solid #2d3748;border-radius:12px;padding:18px 20px">
+    <div style="font-size:0.8rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Step summary</div>
+    <table>
+      <tr><th>#</th><th>Step</th><th>Service</th><th>LLM calls</th><th>Parallelism</th></tr>
+      <tr><td>1–2</td><td>Upload &amp; unzip</td><td>Streamlit → Node.js</td><td class="mono" style="color:#4ade80">0</td><td>—</td></tr>
+      <tr><td>3–5</td><td>Validation (7 check workers)</td><td>Node.js</td><td class="mono" style="color:#4ade80">0</td><td>Worker threads in parallel</td></tr>
+      <tr><td>6–7</td><td>Submit autofix job</td><td>Streamlit → Python</td><td class="mono" style="color:#4ade80">0</td><td>Returns immediately</td></tr>
+      <tr><td>0</td><td>EPUB content indexing (BGE-M3)</td><td>Python + ChromaDB</td><td class="mono" style="color:#4ade80">0</td><td>Background task, fully non-blocking</td></tr>
+      <tr><td>8</td><td>Triage</td><td>Python</td><td class="mono" style="color:#4ade80">0</td><td>Pure Python dict lookup</td></tr>
+      <tr><td>9–10</td><td>Node.js AUTO fixes</td><td>Node.js → Python</td><td class="mono" style="color:#4ade80">0</td><td>—</td></tr>
+      <tr><td>11</td><td>KB hybrid retrieval</td><td>Python + ChromaDB</td><td class="mono" style="color:#4ade80">0</td><td>All issues in parallel (asyncio.gather)</td></tr>
+      <tr><td>12</td><td>Domain agent LLM fixes</td><td>Python → LLM</td><td class="mono" style="color:#fb923c">N unique LLM rules</td><td>All agents + all issues fully parallel</td></tr>
+      <tr><td>13</td><td>EPUBPatcher</td><td>Python</td><td class="mono" style="color:#4ade80">0</td><td>—</td></tr>
+      <tr><td>14</td><td>Trace + cleanup</td><td>Python</td><td class="mono" style="color:#4ade80">0</td><td>—</td></tr>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+{
+  "url": "https://www.w3.org/TR/xml/",
+  "hostname": "www.w3.org",
+  "trustLevel": "authoritative",
+  "contentType": "text/html",
+  "contentHash": "f58a4b9e1e5b8bac13fb55c4e5c7c8c5e2c176aa45ee68e2f1ab2498511927ec",
+  "fetchedAt": "2026-04-16T07:30:07.679Z",
+  "rawPath": "C:\\Users\\krishkal\\Desktop\\epub_backend\\EPUB-Analysis\\kb\\snapshots\\www.w3.org\\TR_xml-245675ade775.html",
+  "normalizedPath": "C:\\Users\\krishkal\\Desktop\\epub_backend\\EPUB-Analysis\\kb\\snapshots\\www.w3.org\\TR_xml-245675ade775.txt",
+  "sanitized": true,
+  "cached": false
+}

@@ -1,0 +1,305 @@
+<title>RAG KB vs W3C EPUB Tests — Gap Analysis</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b0f1a;color:#e2e8f0;padding:24px 16px}
+h1{font-size:1.4rem;font-weight:700;color:#f8fafc;text-align:center;margin-bottom:4px}
+.sub{text-align:center;color:#64748b;font-size:0.82rem;margin-bottom:20px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.stat{background:#1e2330;border:1px solid #2d3748;border-radius:10px;padding:10px 18px;text-align:center}
+.stat-num{font-size:1.4rem;font-weight:800;line-height:1}
+.stat-lbl{font-size:0.68rem;color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+/* kb state */
+.kb-full{background:#14532d22;border:1px solid #14532d;border-radius:12px;margin-bottom:12px}
+.kb-partial{background:#43140722;border:1px solid #431407;border-radius:12px;margin-bottom:12px}
+.kb-none{background:#450a0a22;border:1px solid #450a0a;border-radius:12px;margin-bottom:12px}
+.kb-empty{background:#1e293b22;border:1px solid #1e293b;border-radius:12px;margin-bottom:12px}
+.card-head{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer}
+.card-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:800;flex-shrink:0}
+.icon-full{background:#14532d;color:#4ade80}
+.icon-partial{background:#431407;color:#fb923c}
+.icon-none{background:#450a0a;color:#f87171}
+.icon-empty{background:#1e293b;color:#64748b}
+.card-title{font-weight:700;font-size:0.9rem;flex:1;color:#f1f5f9}
+.card-sub{font-size:0.72rem;margin-top:1px}
+.sub-full{color:#4ade80}.sub-partial{color:#fb923c}.sub-none{color:#f87171}.sub-empty{color:#64748b}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:0.65rem;font-weight:700}
+.bg{background:#14532d;color:#4ade80}
+.bo{background:#431407;color:#fb923c}
+.br{background:#450a0a;color:#f87171}
+.bw{background:#1e293b;color:#64748b}
+.card-body{padding:0 16px 14px;font-size:0.78rem}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:#475569;font-weight:600;padding:5px 8px;border-bottom:1px solid #1e293b;font-size:0.68rem;text-transform:uppercase}
+td{padding:5px 8px;border-bottom:1px solid #111827;color:#cbd5e1;vertical-align:top;line-height:1.4}
+tr:last-child td{border-bottom:none}
+.mono{font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:0.71rem;color:#93c5fd}
+.dim{color:#475569}
+.section-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#334155;margin:20px 0 8px}
+.chev{color:#475569;font-size:0.75rem;transition:transform .2s}
+.gap-box{background:#1a0f1a;border:1px solid #5b2d8a;border-radius:8px;padding:12px 14px;margin-top:8px}
+.gap-title{font-size:0.78rem;font-weight:700;color:#c084fc;margin-bottom:6px}
+.gap-item{font-size:0.74rem;color:#a78bfa;padding:2px 0}
+.gap-item::before{content:"→ ";color:#5b2d8a}
+</style>
+
+<h1>RAG KB vs W3C EPUB Tests — Gap Analysis</h1>
+<p class="sub">What the knowledge base covers today vs what the W3C EPUB 3 test suite requires</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num" style="color:#4ade80">87</div><div class="stat-lbl">KB rules total</div></div>
+  <div class="stat"><div class="stat-num" style="color:#fb923c">3</div><div class="stat-lbl">Active collections</div></div>
+  <div class="stat"><div class="stat-num" style="color:#f87171">1</div><div class="stat-lbl">Empty collection</div></div>
+  <div class="stat"><div class="stat-num" style="color:#f87171">6</div><div class="stat-lbl">W3C categories missing</div></div>
+</div>
+
+<!-- ── WHAT'S IN THE KB NOW ── -->
+<div class="section-label">Current KB Collections</div>
+
+<div class="kb-full">
+  <div class="card-head">
+    <div class="card-icon icon-full">CSS</div>
+    <div style="flex:1">
+      <div class="card-title">kb_css — 45 rules <span class="badge bg">GOOD</span></div>
+      <div class="card-sub sub-full">CSS_001 → CSS_045 · Best practices, font declarations, layout, EPUB-specific CSS</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Rules present</th><th>Topic</th></tr>
+      <tr><td class="mono">CSS_001–005</td><td>!important, @font-face, epub:type selectors, fixed widths, font-size units</td></tr>
+      <tr><td class="mono">CSS_006–010</td><td>Flexbox/grid in EPUB2, page-break, CJK writing-mode, contrast ratio, absolute positioning</td></tr>
+      <tr><td class="mono">CSS_011–015</td><td>Media queries, animations, line-height, multi-column, overflow</td></tr>
+      <tr><td class="mono">CSS_016–020</td><td>Semantic classes, vendor prefixes, calc(), box-sizing, custom properties</td></tr>
+      <tr><td class="mono">CSS_021–030</td><td>Specificity, text-indent, table layout, footnote styling, filter, font-display, centering, orphans/widows, allowed font formats, position:fixed</td></tr>
+      <tr><td class="mono">CSS_031–045</td><td>word-wrap, list-style, display:none, hyphenation, chapter scoping, counters, reset, clip-path, charset, landmark styling, drop caps, background-attachment, FXL viewport, nth-child, touch targets</td></tr>
+    </table>
+    <div class="gap-box" style="background:#0f2a0f;border-color:#14532d">
+      <div class="gap-title" style="color:#4ade80">✓ Covers well</div>
+      <div class="gap-item" style="color:#86efac">EPUB CSS best practices and common pitfalls</div>
+      <div class="gap-item" style="color:#86efac">Font format declarations and fallbacks</div>
+      <div class="gap-item" style="color:#86efac">Reading system compatibility patterns</div>
+    </div>
+  </div>
+</div>
+
+<div class="kb-full">
+  <div class="card-head">
+    <div class="card-icon icon-full">JS</div>
+    <div style="flex:1">
+      <div class="card-title">kb_js — 27 rules <span class="badge bg">GOOD</span></div>
+      <div class="card-sub sub-full">JS_001 → JS_022 + 5 fix patterns · Scripted content best practices</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Rules present</th><th>Topic</th></tr>
+      <tr><td class="mono">JS_001–005</td><td>No eval(), no XHR/fetch, DOMContentLoaded, OPF scripted property, non-scripted fallback</td></tr>
+      <tr><td class="mono">JS_006–010</td><td>epubReadingSystem API, no localStorage, epub:type event handlers, MathML polyfill, no document.write()</td></tr>
+      <tr><td class="mono">JS_011–015</td><td>Touch/pointer events, ARIA live regions, keyboard focus, no setInterval, EPUB CFI navigation</td></tr>
+      <tr><td class="mono">JS_016–022</td><td>addEventListener, strict mode, debounce, data attributes, accessible SVG, no CDN scripts, media overlay sync</td></tr>
+      <tr><td class="mono">JS_SYNTAX_FIX etc.</td><td>Fix patterns for syntax errors, unsupported APIs, inline handlers, module scripts, manifest declarations</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="kb-partial">
+  <div class="card-head">
+    <div class="card-icon icon-partial">EP</div>
+    <div style="flex:1">
+      <div class="card-title">epub_rules — 15 rules <span class="badge bo">THIN</span></div>
+      <div class="card-sub sub-partial">EPUB_FIX_001 → EPUB_FIX_015 · Only covers a small slice of structural rules</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Rule</th><th>What it covers</th></tr>
+      <tr><td class="mono">EPUB_FIX_001</td><td>Font media-type corrections in OPF manifest</td></tr>
+      <tr><td class="mono">EPUB_FIX_002–003</td><td>CSS invalid declaration fixes (missing hyphens, unit typos)</td></tr>
+      <tr><td class="mono">EPUB_FIX_004</td><td>ISO-8601 date format for dc:date</td></tr>
+      <tr><td class="mono">EPUB_FIX_005</td><td>html[lang] attribute injection</td></tr>
+      <tr><td class="mono">EPUB_FIX_006</td><td>NCX navPoint playOrder sequence repair</td></tr>
+      <tr><td class="mono">EPUB_FIX_007–015</td><td>CSS syntax, font fallbacks, internal links, unreferenced media, missing class selectors, manifest items, table styling, list styling, broken JS references</td></tr>
+    </table>
+    <div class="gap-box">
+      <div class="gap-title">Gaps in epub_rules</div>
+      <div class="gap-item">No rules for NAV document (nav.xhtml) structure</div>
+      <div class="gap-item">No rules for OPF package document validation</div>
+      <div class="gap-item">No rules for fixed layout (rendition:layout, viewport)</div>
+      <div class="gap-item">No rules for media overlays (SMIL)</div>
+      <div class="gap-item">No rules for accessibility metadata (schema:accessMode etc.)</div>
+      <div class="gap-item">Only 15 rules for an issue space covering 130+ validation checks</div>
+    </div>
+  </div>
+</div>
+
+<div class="kb-empty">
+  <div class="card-head">
+    <div class="card-icon icon-empty">IP</div>
+    <div style="flex:1">
+      <div class="card-title">issue_patterns — 0 rules <span class="badge bw">EMPTY</span></div>
+      <div class="card-sub sub-empty">This collection exists but has never been populated</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="gap-box">
+      <div class="gap-title">What this collection was supposed to hold</div>
+      <div class="gap-item">Patterns for every rule ID the validator can detect (130+ issues)</div>
+      <div class="gap-item">Concrete examples of each issue + the correct fix</div>
+      <div class="gap-item">Used by hybrid search to retrieve targeted context when an issue is found</div>
+      <div class="gap-item">Currently: when an issue is detected, this collection contributes nothing</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── W3C GAPS ── -->
+<div class="section-label">W3C EPUB Test Categories — What's Missing from KB</div>
+
+<div class="kb-none">
+  <div class="card-head">
+    <div class="card-icon icon-none">FXL</div>
+    <div style="flex:1">
+      <div class="card-title">Fixed Layout (fxl-* / lay-*) <span class="badge br">NOT IN KB</span></div>
+      <div class="card-sub sub-none">80+ W3C tests · 0 KB rules</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>W3C Test Category</th><th>What it covers</th><th>In KB?</th></tr>
+      <tr><td class="mono">fxl-layout-duplication</td><td>Duplicate rendition:layout declarations</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">fxl-page-spread-*</td><td>page-spread-left/right/center behavior</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">fxl-spine-overrides</td><td>Spine-level rendition overrides</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">lay-rendition-flow-*</td><td>rendition:flow scrolled/auto</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">lay-viewport-meta-prop</td><td>FXL viewport meta property</td><td><span class="badge bo">Partial (CSS_043)</span></td></tr>
+      <tr><td class="mono">lay-pkg-flow-*</td><td>Package-level flow declarations</td><td><span class="badge br">No</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="kb-none">
+  <div class="card-head">
+    <div class="card-icon icon-none">MOL</div>
+    <div style="flex:1">
+      <div class="card-title">Media Overlays (mol-*) <span class="badge br">NOT IN KB</span></div>
+      <div class="card-sub sub-none">SMIL audio sync · 0 KB rules</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>W3C Test Category</th><th>What it covers</th><th>In KB?</th></tr>
+      <tr><td class="mono">mol-audio</td><td>Audio file requirements for overlays</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">mol-timing-synchronization</td><td>SMIL clipBegin/clipEnd timing</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">mol-navigation</td><td>Overlay navigation and skip behavior</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">mol-css</td><td>CSS class application during playback</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">mol-ignore</td><td>epub:type="sidebar" overlay ignore rules</td><td><span class="badge br">No</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="kb-none">
+  <div class="card-head">
+    <div class="card-icon icon-none">CNT</div>
+    <div style="flex:1">
+      <div class="card-title">Content Support (cnt-*) — SVG &amp; MathML <span class="badge br">NOT IN KB</span></div>
+      <div class="card-sub sub-none">SVG embedding, MathML, font formats · 0 KB rules</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>W3C Test Category</th><th>What it covers</th><th>In KB?</th></tr>
+      <tr><td class="mono">cnt-svg-support</td><td>SVG as spine item, inline SVG in XHTML</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">cnt-svg-css</td><td>CSS styling of SVG elements in EPUB</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">cnt-svg-embedded</td><td>Embedded SVG in XHTML content files</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">cnt-mathml-support</td><td>Native MathML rendering in EPUB RS</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">cnt-css-fonts_woff2</td><td>WOFF2 font loading and fallback</td><td><span class="badge bo">Partial (CSS_002, CSS_029)</span></td></tr>
+      <tr><td class="mono">cnt-xhtml-support</td><td>XHTML5 polyglot content documents</td><td><span class="badge br">No</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="kb-none">
+  <div class="card-head">
+    <div class="card-icon icon-none">CSS</div>
+    <div style="flex:1">
+      <div class="card-title">EPUB CSS Extensions (css-epub-*) <span class="badge br">NOT IN KB</span></div>
+      <div class="card-sub sub-none">epub: prefixed CSS properties · 0 dedicated KB rules</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>W3C Test Category</th><th>What it covers</th><th>In KB?</th></tr>
+      <tr><td class="mono">css-epub-hyphens</td><td>-epub-hyphens property and auto hyphenation</td><td><span class="badge bo">Partial (CSS_034)</span></td></tr>
+      <tr><td class="mono">css-epub-writing-mode</td><td>-epub-writing-mode for vertical text</td><td><span class="badge bo">Partial (CSS_008)</span></td></tr>
+      <tr><td class="mono">css-epub-text-emphasis</td><td>-epub-text-emphasis for CJK emphasis marks</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">css-epub-text-orientation</td><td>-epub-text-orientation: mixed/upright</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">css-epub-word-break</td><td>-epub-word-break for CJK word wrapping</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">css-epub-text-combine-horizontal</td><td>Tate-chu-yoko (horizontal-in-vertical)</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">css-epub-text-align-last</td><td>Text alignment of last line in justified blocks</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">css-epub-line-break</td><td>CJK line breaking rules</td><td><span class="badge br">No</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="kb-none">
+  <div class="card-head">
+    <div class="card-icon icon-none">NAV</div>
+    <div style="flex:1">
+      <div class="card-title">Navigation, Package, Accessibility <span class="badge br">NOT IN KB</span></div>
+      <div class="card-sub sub-none">nav.xhtml structure, OPF package rules, EPUB Accessibility spec</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Category</th><th>What it covers</th><th>In KB?</th></tr>
+      <tr><td class="mono">nav-* tests</td><td>nav.xhtml TOC structure, landmarks, page-list, epub:type</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">pkg-* tests</td><td>OPF unique-identifier, spine@toc, link elements, prefixes</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">acc-* tests</td><td>schema:accessMode, WCAG conformance, accessibilitySummary</td><td><span class="badge bo">Partial (EPUB_FIX_005)</span></td></tr>
+      <tr><td class="mono">epub:type semantics</td><td>Correct epub:type values for landmarks, notes, chapters</td><td><span class="badge br">No</span></td></tr>
+      <tr><td class="mono">ARIA roles in EPUB</td><td>doc-chapter, doc-footnote, doc-toc ARIA roles</td><td><span class="badge br">No</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ── PRIORITY ADDITIONS ── -->
+<div class="section-label">Recommended KB Additions (Priority Order)</div>
+
+<div style="background:#1e2330;border:1px solid #2d3748;border-radius:12px;padding:16px;margin-bottom:12px">
+  <table>
+    <tr><th>Priority</th><th>Collection</th><th>What to add</th><th>Impact</th></tr>
+    <tr>
+      <td><span class="badge br">P1</span></td>
+      <td class="mono">issue_patterns</td>
+      <td>130+ entries — one pattern per validation rule ID with example + correct fix. This is completely empty and used in every hybrid search.</td>
+      <td style="color:#f87171">Critical — empty collection contributes 0 to retrieval</td>
+    </tr>
+    <tr>
+      <td><span class="badge bo">P2</span></td>
+      <td class="mono">epub_rules</td>
+      <td>Expand from 15 → 50+ rules: add NAV document, OPF package structure, accessibility metadata, ARIA doc-* roles</td>
+      <td style="color:#fb923c">High — only 15 rules cover 130+ issue types</td>
+    </tr>
+    <tr>
+      <td><span class="badge bo">P3</span></td>
+      <td class="mono">kb_css (new entries)</td>
+      <td>Add 8 rules for epub: prefixed CSS properties (hyphens, text-emphasis, text-orientation, word-break, writing-mode CJK variants)</td>
+      <td style="color:#fb923c">High — CJK/multilingual EPUBs fail without these</td>
+    </tr>
+    <tr>
+      <td><span class="badge bw">P4</span></td>
+      <td class="mono">kb_fxl (new collection)</td>
+      <td>New collection: 15–20 rules for fixed layout — viewport, page-spread, rendition:layout, spine overrides</td>
+      <td style="color:#94a3b8">Medium — only needed for FXL EPUBs</td>
+    </tr>
+    <tr>
+      <td><span class="badge bw">P5</span></td>
+      <td class="mono">kb_media (new collection)</td>
+      <td>New collection: 10 rules for media overlays (SMIL structure, clipBegin/clipEnd, sync points, nav skip)</td>
+      <td style="color:#94a3b8">Medium — only needed for audiobooks/overlays</td>
+    </tr>
+    <tr>
+      <td><span class="badge bw">P6</span></td>
+      <td class="mono">kb_content (new collection)</td>
+      <td>New collection: SVG in EPUB rules, MathML fallback rules, XHTML polyglot requirements</td>
+      <td style="color:#94a3b8">Low — specialized content types</td>
+    </tr>
+  </table>
+</div>

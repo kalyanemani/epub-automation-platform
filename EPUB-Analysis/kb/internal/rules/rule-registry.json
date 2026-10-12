@@ -1,0 +1,137 @@
+{
+  "version": "2026-04-13",
+  "project": "EPUB-Analysis",
+  "notes": [
+    "This registry documents which subsystem is the source of truth for each rule family.",
+    "Use it to guide safe autofix policy and release reviews."
+  ],
+  "rules": [
+    {
+      "id": "S_*",
+      "category": "structure",
+      "source_of_truth": [
+        "w3c-epub-33",
+        "epubcheck-repo"
+      ],
+      "fix_mode": "deterministic",
+      "safe_to_autofix": true,
+      "requires_manual_review": false
+    },
+    {
+      "id": "M_*",
+      "category": "metadata",
+      "source_of_truth": [
+        "w3c-epub-33",
+        "w3c-epub-a11y-11"
+      ],
+      "fix_mode": "deterministic",
+      "safe_to_autofix": false,
+      "requires_manual_review": true
+    },
+    {
+      "id": "NCX_*",
+      "category": "navigation",
+      "source_of_truth": [
+        "w3c-epub-33",
+        "epubcheck-repo",
+        "daisy-pagelist",
+        "daisy-toc"
+      ],
+      "fix_mode": "deterministic",
+      "safe_to_autofix": true,
+      "requires_manual_review": false
+    },
+    {
+      "id": "NAV_*",
+      "category": "navigation",
+      "source_of_truth": [
+        "w3c-epub-33",
+        "daisy-toc",
+        "daisy-landmarks"
+      ],
+      "fix_mode": "deterministic",
+      "safe_to_autofix": true,
+      "requires_manual_review": false
+    },
+    {
+      "id": "T_SPECIAL_CHAR_ENTITY",
+      "category": "text",
+      "source_of_truth": [
+        "lookup-html-entities-json",
+        "lookup-unicode-tr15",
+        "lookup-unicode-data"
+      ],
+      "fix_mode": "lookup_only",
+      "safe_to_autofix": true,
+      "requires_manual_review": false
+    },
+    {
+      "id": "T_HYPHENATION_WORD_MERGE",
+      "category": "text",
+      "source_of_truth": [
+        "lookup-hunspell-hyphen",
+        "lookup-scowl",
+        "internal-gold-corrections",
+        "internal-false-positives"
+      ],
+      "fix_mode": "rag_assisted",
+      "safe_to_autofix": true,
+      "requires_manual_review": true
+    },
+    {
+      "id": "T_MISSING_INCORRECT_TEXT",
+      "category": "text",
+      "source_of_truth": [
+        "internal-gold-corrections",
+        "internal-manual-review",
+        "internal-false-positives",
+        "lookup-scowl",
+        "lookup-libreoffice-dictionaries",
+        "lookup-wordfreq"
+      ],
+      "fix_mode": "rag_assisted",
+      "safe_to_autofix": false,
+      "requires_manual_review": true
+    },
+    {
+      "id": "L_*",
+      "category": "layout",
+      "source_of_truth": [
+        "w3c-epub-rs-33",
+        "w3c-css-snapshot-2025",
+        "sprint2-layout-rules",
+        "epubcheck-repo"
+      ],
+      "fix_mode": "rag_assisted",
+      "safe_to_autofix": false,
+      "requires_manual_review": true
+    },
+    {
+      "id": "JS_*",
+      "category": "scripting",
+      "source_of_truth": [
+        "w3c-epub-rs-33",
+        "w3c-epub-33",
+        "whatwg-html-syntax",
+        "sprint2-script-rules",
+        "epubcheck-repo"
+      ],
+      "fix_mode": "rag_assisted",
+      "safe_to_autofix": false,
+      "requires_manual_review": true
+    },
+    {
+      "id": "A_*",
+      "category": "accessibility",
+      "source_of_truth": [
+        "w3c-epub-a11y-11",
+        "w3c-epub-a11y-tech-11",
+        "w3c-wcag-22",
+        "ace-guide"
+      ],
+      "fix_mode": "rag_assisted",
+      "safe_to_autofix": false,
+      "requires_manual_review": true
+    }
+  ]
+}

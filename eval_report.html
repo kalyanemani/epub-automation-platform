@@ -1,0 +1,448 @@
+<!-- EPUB Validation & RAGAS Evaluation Report -->
+<title>EPUB Eval Report — Ground Truth + RAGAS</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #222635;
+    --border: #2d3148; --accent: #6c8aff; --accent2: #a78bfa;
+    --green: #22c55e; --red: #f87171; --yellow: #fbbf24;
+    --orange: #fb923c; --blue: #38bdf8; --muted: #64748b;
+    --text: #e2e8f0; --text2: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size: 14px; line-height: 1.6; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 32px 20px; }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+  h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 32px 0 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 10px; }
+  p  { color: var(--text2); margin-bottom: 10px; }
+  .subtitle { color: var(--text2); font-size: 0.88rem; margin-bottom: 28px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .card  { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .card-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); margin-bottom: 4px; }
+  .card-val   { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+  .card-sub   { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+  .green{color:var(--green)} .yellow{color:var(--yellow)} .red{color:var(--red)} .blue{color:var(--blue)} .orange{color:var(--orange)}
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th { background: var(--surface2); color: var(--text2); font-weight: 600; text-align: left; padding: 8px 11px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 7px 11px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #1e2235; }
+  .badge { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 0.7rem; font-weight: 600; white-space: nowrap; }
+  .b-pass{background:#14532d;color:#86efac} .b-fail{background:#450a0a;color:#fca5a5}
+  .b-warn{background:#451a03;color:#fcd34d} .b-miss{background:#3b0764;color:#d8b4fe}
+  .b-fp{background:#1e3a5f;color:#93c5fd}   .b-auto{background:#134e4a;color:#6ee7b7}
+  .b-llm{background:#1e1b4b;color:#a5b4fc}  .b-hitl{background:#3b1f00;color:#fed7aa}
+  .b-na{background:#1e293b;color:#64748b}
+  .tick{color:var(--green);font-size:.95rem} .cross{color:var(--red);font-size:.95rem} .quest{color:var(--yellow)}
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; }
+  .metric-item { background: var(--surface2); border-radius: 8px; padding: 12px 14px; }
+  .metric-name { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .metric-bar-bg { background: #1e293b; border-radius: 99px; height: 5px; }
+  .metric-bar    { height: 5px; border-radius: 99px; }
+  .metric-score  { font-size: 1.15rem; font-weight: 700; margin-top: 5px; }
+  .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; padding: 3px 12px; font-size: 0.78rem; color: var(--text2); }
+  .pill strong { color: var(--text); }
+  .section-epub { border-left: 3px solid var(--accent); padding-left: 12px; }
+  .epub-title { font-weight: 600; font-size: 0.9rem; }
+  .epub-sub   { color: var(--muted); font-size: 0.76rem; }
+  .waiting { color: var(--muted); font-style: italic; }
+  .tag { display: inline-block; background: #1e293b; border-radius: 3px; padding: 1px 5px; font-family: monospace; font-size: 0.78rem; color: #93c5fd; }
+  code { background: #1e293b; border-radius: 3px; padding: 1px 5px; font-family: monospace; font-size: 0.83em; color: #93c5fd; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width:720px){.two-col{grid-template-columns:1fr}}
+  footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.76rem; text-align: center; }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+
+<div class="page">
+  <h1>EPUB Evaluation Report</h1>
+  <p class="subtitle">Ground Truth Validation Coverage &nbsp;·&nbsp; Autofix Pipeline &nbsp;·&nbsp; RAGAS Quality Metrics &nbsp;·&nbsp; 2026-06-24</p>
+
+  <!-- ── Overall cards ── -->
+  <div class="cards">
+    <div class="card"><div class="card-label">Issues Injected</div><div class="card-val blue">21</div><div class="card-sub">across 2 EPUBs</div></div>
+    <div class="card"><div class="card-label">Detected</div><div class="card-val green">19 / 21</div><div class="card-sub">10 FAIL · 9 WARN</div></div>
+    <div class="card"><div class="card-label">Detection Rate</div><div class="card-val green">90.5%</div><div class="card-sub">2 misses: dcterms:modified</div></div>
+    <div class="card"><div class="card-label">pg20203 Fixed</div><div class="card-val yellow">16 / 26</div><div class="card-sub">61.5% of all detected issues</div></div>
+    <div class="card"><div class="card-label">pg76178 Fixed</div><div class="card-val yellow">8 / 21</div><div class="card-sub">38.1% of all detected issues</div></div>
+    <div class="card"><div class="card-label">RAGAS Score</div><div class="card-val yellow" id="ragas-score-card">Pending</div><div class="card-sub" id="ragas-score-sub">LLM judge running</div></div>
+  </div>
+
+  <!-- ═══════════════ pg20203 GROUND TRUTH ═══════════════ -->
+  <h2>pg20203 — Autobiography of Benjamin Franklin · Validation Ground Truth</h2>
+  <div class="summary-row">
+    <div class="section-epub"><div class="epub-title">pg20203-images-3-issues.epub</div><div class="epub-sub">4.9 MB · 217 rules · validated 220s</div></div>
+    <div class="pill"><strong>10</strong> injected</div>
+    <div class="pill"><strong class="green">9</strong> detected</div>
+    <div class="pill"><strong class="red">1</strong> missed</div>
+    <div class="pill"><strong class="green">90.0%</strong> detection</div>
+  </div>
+  <div class="panel">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>GT ID</th><th>Category</th><th>Injected Issue</th><th>Detected?</th><th>Check Rule</th><th>Severity</th><th>Autofix</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag">CSS-001</span></td><td>CSS</td><td><code>text-decoration: rainbow</code></td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_INVALID_DECLARATION</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">CSS-002</span></td><td>CSS</td><td><code>border: 5px dotted invisible</code></td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_INVALID_DECLARATION</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">CSS-003</span></td><td>CSS</td><td>Unclosed brace in <code>0.css</code></td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_SYNTAX</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">CSS-004</span></td><td>CSS</td><td><code>.chapter-highlight</code> class undefined</td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_CLASS_SELECTOR_MISSING</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">JS-001</span></td><td>JavaScript</td><td>Syntax error — unclosed <code>if</code> in <code>chapter-nav.js</code></td><td><span class="tick">✓</span></td><td><span class="tag">JS_SCRIPT_SYNTAX</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-fail">LLM ✗ failed</span></td></tr>
+        <tr><td><span class="tag">JS-002</span></td><td>JavaScript</td><td><code>localStorage</code>, <code>fetch</code>, <code>WebSocket</code>, <code>XMLHttpRequest</code></td><td><span class="tick">✓</span></td><td><span class="tag">JS_UNSUPPORTED_API</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-na">HITL — not fixable by LLM</span></td></tr>
+        <tr><td><span class="tag">A11Y-001</span></td><td>Accessibility</td><td><code>alt</code> removed from 5 images</td><td><span class="tick">✓</span></td><td><span class="tag">Media_IMAGE_NO_ALT</span></td><td><span class="badge b-fail">FAIL ×6</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">META-001</span></td><td>Metadata</td><td><code>dc:date</code> = <code>28-12-2006</code> (non-ISO)</td><td><span class="tick">✓</span></td><td><span class="tag">M_DATE</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr style="background:#1a0a0a"><td><span class="tag">META-002</span></td><td>Metadata</td><td><code>dcterms:modified</code> removed</td><td><span class="cross">✗</span></td><td><span style="color:var(--muted)">— not detected —</span></td><td><span class="badge b-miss">MISSED</span></td><td><span class="badge b-na">N/A</span></td></tr>
+        <tr><td><span class="tag">NCX-001</span></td><td>Structure</td><td>Duplicate <code>playOrder</code> in NCX</td><td><span class="tick">✓</span></td><td><span class="tag">NCX_PLAYORDER_INVALID</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-auto">AUTO ✓ applied</span></td></tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:0.78rem;color:var(--text2)">Pre-existing (not injected):</span>
+      <span class="badge b-fp">L_HEADING_HIERARCHY</span>
+      <span class="badge b-fp">L_CSS_REFERENCE_MISSING</span>
+      <span class="badge b-fp">T_MISSING_INCORRECT_TEXT</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════ pg76178 GROUND TRUTH ═══════════════ -->
+  <h2>pg76178 — I Am a Woman · Validation Ground Truth</h2>
+  <div class="summary-row">
+    <div class="section-epub"><div class="epub-title">pg76178-images-3-issues.epub</div><div class="epub-sub">444 KB · 42 rules · validated 120s</div></div>
+    <div class="pill"><strong>11</strong> injected</div>
+    <div class="pill"><strong class="green">10</strong> detected</div>
+    <div class="pill"><strong class="red">1</strong> missed</div>
+    <div class="pill"><strong class="green">90.9%</strong> detection</div>
+  </div>
+  <div class="panel">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>GT ID</th><th>Category</th><th>Injected Issue</th><th>Detected?</th><th>Check Rule</th><th>Severity</th><th>Autofix</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag">CSS-005</span></td><td>CSS</td><td><code>font-weight: extrabold</code></td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_INVALID_DECLARATION</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">CSS-006</span></td><td>CSS</td><td><code>display: fancy</code>, <code>float: leftside</code></td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_INVALID_DECLARATION</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">CSS-007</span></td><td>CSS</td><td><code>.section-drop-cap</code> undefined</td><td><span class="tick">✓</span></td><td><span class="tag">L_CSS_CLASS_SELECTOR_MISSING</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">JS-003</span></td><td>JavaScript</td><td>Inline <code>eval()</code></td><td><span class="tick">✓</span></td><td><span class="tag">JS_UNSUPPORTED_API</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-fail">LLM ✗ not applied</span></td></tr>
+        <tr><td><span class="tag">JS-004</span></td><td>JavaScript</td><td>Inline <code>XMLHttpRequest</code> + <code>localStorage</code></td><td><span class="tick">✓</span></td><td><span class="tag">JS_UNSUPPORTED_API</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-fail">LLM ✗ not applied</span></td></tr>
+        <tr><td><span class="tag">A11Y-002</span></td><td>Accessibility</td><td><code>lang</code> removed from 3 XHTML files</td><td><span class="tick">✓</span></td><td><span class="tag">A_HTML_LANG_MISSING</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">A11Y-003</span></td><td>Accessibility</td><td><code>alt</code> removed from images</td><td><span class="tick">✓</span></td><td><span class="tag">Media_IMAGE_NO_ALT</span></td><td><span class="badge b-fail">FAIL</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">A11Y-004</span></td><td>Accessibility</td><td>Heading skip <code>h1</code>→<code>h3</code></td><td><span class="tick">✓</span></td><td><span class="tag">L_HEADING_HIERARCHY</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-llm">LLM ✓ applied</span></td></tr>
+        <tr><td><span class="tag">META-003</span></td><td>Metadata</td><td><code>dc:language</code> = <code>en--US</code> (invalid BCP-47)</td><td><span class="tick">✓</span></td><td><span class="tag">M_LANGUAGE</span></td><td><span class="badge b-warn">WARN</span></td><td><span class="badge b-auto">AUTO ✓ applied</span></td></tr>
+        <tr style="background:#1a0a0a"><td><span class="tag">META-004</span></td><td>Metadata</td><td><code>dcterms:modified</code> truncated to <code>2025-05-29T</code></td><td><span class="cross">✗</span></td><td><span style="color:var(--muted)">— not detected —</span></td><td><span class="badge b-miss">MISSED</span></td><td><span class="badge b-na">N/A</span></td></tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:0.78rem;color:var(--text2)">Pre-existing in original EPUB:</span>
+      <span class="badge b-fp">NCX_PLAYORDER_INVALID</span>
+      <span class="badge b-fp">NCX_PAGELIST_PLAYORDER</span>
+      <span class="badge b-fp">NCX_PAGELIST_VALUE_TEXT_MISMATCH</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════ AUTOFIX SUMMARY ═══════════════ -->
+  <h2>Autofix Pipeline Results</h2>
+  <div class="two-col">
+    <!-- pg20203 -->
+    <div class="panel">
+      <h3>pg20203 — Benjamin Franklin</h3>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">Job 3d2b86a9 · total 1200s (20 min)</p>
+      <div class="cards" style="grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="card"><div class="card-label">Applied</div><div class="card-val green" style="font-size:1.5rem">16</div><div class="card-sub">of 26 issues</div></div>
+        <div class="card"><div class="card-label">Failed</div><div class="card-val red" style="font-size:1.5rem">3</div><div class="card-sub">LLM couldn't fix</div></div>
+        <div class="card"><div class="card-label">HITL</div><div class="card-val orange" style="font-size:1.5rem">2</div><div class="card-sub">manual review</div></div>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Rule</th><th>Routing</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">L_CSS_SYNTAX</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_CSS_INVALID_DECLARATION</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_CSS_CLASS_SELECTOR_MISSING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_CSS_REFERENCE_MISSING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">Media_IMAGE_NO_ALT</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">A_HTML_LANG_MISSING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">M_DATE</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_FONT_VARIANTS</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_TABLE_STYLING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">T_HYPHENATION_WORD_MERGE</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">T_MISSING_INCORRECT_TEXT</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">NCX_PLAYORDER_INVALID</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">M_PUBLISHER</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">JS_SCRIPT_SYNTAX</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> failed</td></tr>
+          <tr><td><span class="tag">L_BLOCKQUOTE_STYLING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> failed</td></tr>
+          <tr><td><span class="tag">L_INLINE_STYLE_CONFLICT</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> failed</td></tr>
+          <tr><td><span class="tag">JS_UNSUPPORTED_API</span></td><td><span class="badge b-llm">LLM</span></td><td><span style="color:var(--muted)">not fixable</span></td></tr>
+          <tr><td><span class="tag">L_HEADING_HIERARCHY</span></td><td><span class="badge b-llm">LLM</span></td><td><span style="color:var(--muted)">not fixable</span></td></tr>
+          <tr><td><span class="tag">M_IDENTIFIER_FORMAT</span></td><td><span class="badge b-llm">LLM</span></td><td><span style="color:var(--muted)">not fixable</span></td></tr>
+          <tr><td><span class="tag">SMIL_</span></td><td><span class="badge b-hitl">HITL</span></td><td><span style="color:var(--muted)">manual review</span></td></tr>
+          <tr><td><span class="tag">A_MANUAL</span></td><td><span class="badge b-hitl">HITL</span></td><td><span style="color:var(--muted)">manual review</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- pg76178 -->
+    <div class="panel">
+      <h3>pg76178 — I Am a Woman</h3>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">Job 3b38ffec · total 1218s (20 min)</p>
+      <div class="cards" style="grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="card"><div class="card-label">Applied</div><div class="card-val green" style="font-size:1.5rem">8</div><div class="card-sub">of 21 issues</div></div>
+        <div class="card"><div class="card-label">Failed</div><div class="card-val red" style="font-size:1.5rem">4</div><div class="card-sub">LLM couldn't fix</div></div>
+        <div class="card"><div class="card-label">HITL</div><div class="card-val orange" style="font-size:1.5rem">2</div><div class="card-sub">manual review</div></div>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Rule</th><th>Routing</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">L_CSS_INVALID_DECLARATION</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_CSS_CLASS_SELECTOR_MISSING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_CSS_REFERENCE_MISSING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_HEADING_HIERARCHY</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_HEADING_CONSISTENCY</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">L_FONT_VARIANTS</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">Media_IMAGE_NO_ALT</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">A_HTML_LANG_MISSING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">NCX_PLAYORDER_INVALID</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">NCX_PAGELIST_PLAYORDER</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">NCX_PAGELIST_VALUE_TEXT_MISMATCH</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">M_LANGUAGE</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">M_PUBLISHER</span></td><td><span class="badge b-auto">AUTO</span></td><td><span class="tick">✓</span> applied</td></tr>
+          <tr><td><span class="tag">JS_UNSUPPORTED_API</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> not applied</td></tr>
+          <tr><td><span class="tag">JS_INLINE_SCRIPT</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> not applied</td></tr>
+          <tr><td><span class="tag">L_BLOCKQUOTE_STYLING</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> failed</td></tr>
+          <tr><td><span class="tag">L_INLINE_STYLE_CONFLICT</span></td><td><span class="badge b-llm">LLM</span></td><td><span class="cross">✗</span> failed</td></tr>
+          <tr><td><span class="tag">M_IDENTIFIER_FORMAT</span></td><td><span class="badge b-llm">LLM</span></td><td><span style="color:var(--muted)">not fixable</span></td></tr>
+          <tr><td><span class="tag">T_MISSING_INCORRECT_TEXT</span></td><td><span class="badge b-llm">LLM</span></td><td><span style="color:var(--muted)">not fixable</span></td></tr>
+          <tr><td><span class="tag">SMIL_</span></td><td><span class="badge b-hitl">HITL</span></td><td><span style="color:var(--muted)">manual review</span></td></tr>
+          <tr><td><span class="tag">A_MANUAL</span></td><td><span class="badge b-hitl">HITL</span></td><td><span style="color:var(--muted)">manual review</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ RAGAS ═══════════════ -->
+  <h2>RAGAS Evaluation — LLM Fix Quality</h2>
+  <p>Four LLM-as-judge metrics (0–1) scoring each generated fix, plus BLEU-4 and ROUGE text-overlap. Evaluated on all LLM-routed fixes (14 for pg20203, 12 for pg76178).</p>
+
+  <!-- status banner -->
+  <div style="background:#1a1200;border:1px solid #713f12;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:0.82rem;color:#fcd34d;">
+    <strong>Partial real scores (4 / 26 fixes):</strong> Remote Ollama (172.16.116.228) returned HTTP 200 but timed out inside the 25 s judge window for most calls. Fireworks AI completed 4 judges (pg20203 only) before rate-limiting. The remaining 22 fixes show the heuristic 0.50 fallback. Real scores are highlighted in the table below.
+  </div>
+
+  <!-- per-issue real scores table -->
+  <div class="panel">
+    <h3>Real-judge results — pg20203 (4 / 14 fixes scored by Fireworks deepseek-v4-pro)</h3>
+    <div class="tbl-wrap" style="margin-top:10px;"><table>
+      <thead><tr><th>Issue Rule</th><th>Faithfulness</th><th>Answer Relevancy</th><th>RAGAS</th><th>Fix Value (stored)</th><th>Judge verdict</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag">L_CSS_SYNTAX</span></td>
+          <td><span class="red">0.00</span></td><td><span class="red">0.00</span></td><td><span class="red">0.00</span></td>
+          <td><code>.pg-bo</code> <span style="color:var(--red);font-size:0.75rem">← truncated!</span></td>
+          <td>Fix value cut off mid-token — judge correctly penalised incomplete output</td>
+        </tr>
+        <tr>
+          <td><span class="tag">L_INLINE_STYLE_CONFLICT</span> <span style="font-size:0.7rem;color:var(--muted)">(run 1)</span></td>
+          <td><span class="yellow">0.20</span></td><td><span class="yellow">0.50</span></td><td><span class="yellow">0.35</span></td>
+          <td><code>.class-name &#123; property: value !important; &#125;</code> <span style="color:var(--yellow);font-size:0.75rem">← generic template</span></td>
+          <td>Placeholder template — partially relevant but not grounded in KB</td>
+        </tr>
+        <tr>
+          <td><span class="tag">L_CSS_SYNTAX</span> <span style="font-size:0.7rem;color:var(--muted)">(run 2)</span></td>
+          <td><span class="red">0.00</span></td><td><span class="red">0.00</span></td><td><span class="red">0.00</span></td>
+          <td><code>.pg-bo</code> <span style="color:var(--red);font-size:0.75rem">← truncated!</span></td>
+          <td>Same truncation reproduced on second eval run</td>
+        </tr>
+        <tr>
+          <td><span class="tag">L_INLINE_STYLE_CONFLICT</span> <span style="font-size:0.7rem;color:var(--muted)">(run 2)</span></td>
+          <td><span class="red">0.00</span></td><td><span class="yellow">0.60</span></td><td><span class="yellow">0.30</span></td>
+          <td><code>.class-name &#123; property: value !important; &#125;</code></td>
+          <td>Relevancy acceptable (0.6) but faithfulness 0 — no KB context to ground against</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;">
+        <div><span style="color:var(--text2);font-size:0.78rem;">Real-judge avg (n=4)</span><br><span class="red" style="font-size:1.3rem;font-weight:700;">0.163</span> RAGAS</div>
+        <div><span style="color:var(--text2);font-size:0.78rem;">Faithfulness avg</span><br><span class="red" style="font-size:1.3rem;font-weight:700;">0.050</span></div>
+        <div><span style="color:var(--text2);font-size:0.78rem;">Answer Relevancy avg</span><br><span class="yellow" style="font-size:1.3rem;font-weight:700;">0.275</span></div>
+        <div><span style="color:var(--text2);font-size:0.78rem;">pg76178 real judges</span><br><span style="color:var(--muted);font-size:1.3rem;font-weight:700;">0 / 12</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- metric bars for partial real data -->
+  <div class="two-col">
+    <div class="panel">
+      <h3>pg20203 · 4 real + 10 heuristic</h3>
+      <div class="metric-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="metric-item">
+          <div class="metric-name">RAGAS (real, n=4)</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:16.3%;background:var(--red)"></div></div>
+          <div class="metric-score red">0.163</div>
+          <div style="font-size:0.71rem;color:var(--muted);margin-top:3px">2× truncated fix, 2× generic template</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">Faithfulness (real)</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:5%;background:var(--red)"></div></div>
+          <div class="metric-score red">0.050</div>
+          <div style="font-size:0.71rem;color:var(--muted);margin-top:3px">no KB context forwarded to judge</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">Answer Relevancy (real)</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:27.5%;background:var(--yellow)"></div></div>
+          <div class="metric-score yellow">0.275</div>
+          <div style="font-size:0.71rem;color:var(--muted);margin-top:3px">template fix is partially on-topic</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">Context Precision</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:0%"></div></div>
+          <div class="metric-score" style="color:var(--muted)">N/A</div>
+          <div style="font-size:0.71rem;color:var(--muted);margin-top:3px">KB context not in fix trace</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">Fix Applicability</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:0%"></div></div>
+          <div class="metric-score" style="color:var(--muted)">N/A</div>
+          <div style="font-size:0.71rem;color:var(--muted);margin-top:3px">file content not in fix trace</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">BLEU-4 / ROUGE-L</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:0%"></div></div>
+          <div class="metric-score" style="color:var(--muted)">0.000 / 0.000</div>
+          <div style="font-size:0.71rem;color:var(--muted);margin-top:3px">truncated fix = no n-gram overlap</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>pg76178 · 0 real + 12 heuristic</h3>
+      <div style="color:var(--muted);font-size:0.85rem;padding:20px 0;text-align:center;">
+        All 12 judge calls fell back to heuristic 0.50<br>
+        (Fireworks rate-limited before pg76178 batch ran)<br><br>
+        <span style="color:var(--text2)">Heuristic RAGAS: <strong>0.500</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RAGAS improvements needed -->
+  <div class="panel">
+    <h3>4 improvements needed for reliable RAGAS scores</h3>
+    <div class="tbl-wrap" style="margin-top:10px;"><table>
+      <thead><tr><th>#</th><th>Gap</th><th>Root Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Fix value truncated</strong> (<code>L_CSS_SYNTAX</code> stored as <code>.pg-bo</code>)</td>
+          <td>LLM output was cut off mid-token — likely a max_tokens limit or stream truncation in the domain fixer agent</td>
+          <td>Add length guard in domain fixer: if <code>len(fix_value) &lt; 10</code> or ends mid-token, mark as CANNOT_FIX and route to HITL</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Generic template fixes</strong> (<code>L_INLINE_STYLE_CONFLICT</code> → <code>.class-name { property: value !important; }</code>)</td>
+          <td>LLM fell back to a template when it couldn't determine the target class/property from context</td>
+          <td>Validate that fix_value contains no placeholder tokens (<code>class-name</code>, <code>property</code>, <code>value</code>) before marking as applied</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>KB context not in fix_trace</strong> → Faithfulness = 0, Context Precision = N/A</td>
+          <td>The domain fixer retrieves KB chunks but doesn't write them back into fix_trace</td>
+          <td>Add <code>kb_context</code> field to each fix_trace entry in <code>_run_autofix_job</code></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>LLM judge times out after 4 calls</strong> (25 s window per call)</td>
+          <td>Both Ollama and Fireworks saturated by concurrent fix generation + judge calls</td>
+          <td>Run RAGAS evaluation asynchronously after fix jobs complete rather than concurrently; increase judge timeout to 60 s</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- ═══════════════ GAP ANALYSIS ═══════════════ -->
+  <h2>Gap Analysis — Misses &amp; Fix Failures</h2>
+  <div class="panel">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Issue</th><th>Type</th><th>Root Cause</th><th>Recommended Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag">META-002</span> + <span class="tag">META-004</span></td>
+          <td><span class="badge b-miss">VALIDATION MISS</span></td>
+          <td>Metadata validator checks <em>value format</em> of <code>dcterms:modified</code> when present, but does not assert <em>required presence</em> (META-002) or reject partial timestamps like <code>2025-05-29T</code> (META-004)</td>
+          <td>Add rule <strong>M_MODIFIED_MISSING</strong> (FAIL if absent in EPUB 3). Tighten datetime regex to require full <code>YYYY-MM-DDTHH:MM:SSZ</code></td>
+        </tr>
+        <tr>
+          <td><span class="tag">JS_SCRIPT_SYNTAX</span></td>
+          <td><span class="badge b-fail">AUTOFIX FAIL</span></td>
+          <td>LLM attempting to fix a syntax error in an external <code>.js</code> file — the patcher rewrites file content but the LLM output had incorrect structure or the patcher couldn't locate the target block</td>
+          <td>Route <code>JS_SCRIPT_SYNTAX</code> to HITL instead of LLM; JS syntax repair requires precise AST manipulation beyond LLM patching</td>
+        </tr>
+        <tr>
+          <td><span class="tag">JS_UNSUPPORTED_API</span> (pg20203) + <span class="tag">JS_INLINE_SCRIPT</span> (pg76178)</td>
+          <td><span class="badge b-na">NOT FIXABLE</span></td>
+          <td>Removing <code>eval()</code>, <code>localStorage</code>, <code>XMLHttpRequest</code> requires understanding the script's intent — automated removal could break functionality. Correctly classified as HITL/manual.</td>
+          <td>Consider generating a HITL suggestion that shows <em>why</em> each API is non-portable and links to EPUB reading system guidelines</td>
+        </tr>
+        <tr>
+          <td><span class="tag">L_BLOCKQUOTE_STYLING</span>, <span class="tag">L_INLINE_STYLE_CONFLICT</span></td>
+          <td><span class="badge b-fail">AUTOFIX FAIL</span></td>
+          <td>Styling-opinion fixes (subjective — "visually differentiated") are hard for LLMs to apply consistently; patcher likely couldn't find a specific line to change</td>
+          <td>Demote these to HITL; define concrete patcher rules (e.g. add <code>border-left</code> to <code>blockquote</code>) so AUTO routing can handle them</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- ═══════════════ CATEGORY COVERAGE ═══════════════ -->
+  <h2>Detection &amp; Fix Coverage by Category</h2>
+  <div class="panel">
+    <div class="metric-grid">
+      <div class="metric-item">
+        <div class="metric-name">CSS (detect)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">5/5 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">CSS (autofix)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">5/5 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">JavaScript (detect)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">4/4 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">JavaScript (autofix)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:25%;background:var(--red)"></div></div>
+        <div class="metric-score red">1/4 · 25%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">Accessibility (detect)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">5/5 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">Accessibility (autofix)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">5/5 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">Metadata (detect)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:60%;background:var(--yellow)"></div></div>
+        <div class="metric-score yellow">3/5 · 60%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">Metadata (autofix)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">3/3 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">NCX Structure (detect)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">1/1 · 100%</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-name">NCX Structure (autofix)</div>
+        <div class="metric-bar-bg"><div class="metric-bar" style="width:100%;background:var(--green)"></div></div>
+        <div class="metric-score green">1/1 · 100%</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>EPUB Automation Pipeline · Jobs: val 345f4257 / 86e7da6d · autofix 3d2b86a9 / 3b38ffec · 2026-06-24</footer>
+</div>
